@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: finance-control-api
+
+server:
+  port: ${APP_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
