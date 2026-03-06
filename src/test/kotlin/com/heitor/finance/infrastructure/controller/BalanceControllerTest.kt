@@ -1,0 +1,68 @@
+package com.heitor.finance.infrastructure.controller
+
+import com.heitor.finance.application.dto.BalanceResponse
+import com.heitor.finance.application.dto.CategoryResponse
+import com.heitor.finance.application.port.input.FindBalanceUseCase
+import com.heitor.finance.domain.exception.CategoryNotFoundException
+import com.heitor.finance.infrastructure.exception.GlobalExceptionHandler
+import io.mockk.every
+import io.mockk.mockk
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.test.web.servlet.assertj.MockMvcTester
+import java.math.BigDecimal
+import java.time.LocalDate
+
+class BalanceControllerTest {
+
+    private val findBalanceUseCase: FindBalanceUseCase = mockk()
+
+    private val mockMvc = MockMvcTester.of(
+        listOf(BalanceController(findBalanceUseCase))
+    ) { it.setControllerAdvice(GlobalExceptionHandler()).build() }
+
+    @Test
+    fun `GET balance should return 200 with category when categoryId provided`() {
+        every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), 1L) } returns BalanceResponse(
+            category = CategoryResponse(id = 1L, name = "Transport"),
+            revenue = BigDecimal("200.00"),
+            expense = BigDecimal("100.00"),
+            balance = BigDecimal("100.00")
+        )
+
+        assertThat(
+            mockMvc.get().uri("/v1/balance")
+                .param("startDate", "2024-01-01")
+                .param("endDate", "2024-01-31")
+                .param("categoryId", "1")
+        ).hasStatusOk()
+    }
+
+    @Test
+    fun `GET balance should return 200 without category when categoryId not provided`() {
+        every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } returns BalanceResponse(
+            category = null,
+            revenue = BigDecimal("500.00"),
+            expense = BigDecimal("150.00"),
+            balance = BigDecimal("350.00")
+        )
+
+        assertThat(
+            mockMvc.get().uri("/v1/balance")
+                .param("startDate", "2024-01-01")
+                .param("endDate", "2024-01-31")
+        ).hasStatusOk()
+    }
+
+    @Test
+    fun `GET balance should return 404 when category not found`() {
+        every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), 99L) } throws CategoryNotFoundException(99L)
+
+        assertThat(
+            mockMvc.get().uri("/v1/balance")
+                .param("startDate", "2024-01-01")
+                .param("endDate", "2024-01-31")
+                .param("categoryId", "99")
+        ).hasStatus(404)
+    }
+}

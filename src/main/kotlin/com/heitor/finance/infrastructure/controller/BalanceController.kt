@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/v1/balanco")
+@RequestMapping("/v1/balance")
 class BalanceController(
     private val findBalanceUseCase: FindBalanceUseCase
 ) {
 
     @GetMapping
     fun findBalance(
-        @RequestParam("data_inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate,
-        @RequestParam("data_fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate,
-        @RequestParam("id_categoria") categoryId: Long
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate,
+        @RequestParam(required = false) categoryId: Long?
     ): ResponseEntity<BalanceResponse> =
         ResponseEntity.ok(findBalanceUseCase.findByPeriodAndCategory(startDate, endDate, categoryId))
 }

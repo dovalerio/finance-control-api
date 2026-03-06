@@ -2,11 +2,14 @@ package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CreateCategoryRequest
 import com.heitor.finance.application.port.output.CategoryOutputPort
+import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.model.Category
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class CreateCategoryUseCaseImplTest {
 
@@ -18,11 +21,23 @@ class CreateCategoryUseCaseImplTest {
         val request = CreateCategoryRequest(name = "Transport")
         val savedCategory = Category(id = 1L, name = "Transport")
 
+        every { categoryOutputPort.existsByName("Transport") } returns false
         every { categoryOutputPort.save(Category(name = "Transport")) } returns savedCategory
 
         val response = useCase.execute(request)
 
         assertEquals(1L, response.id)
         assertEquals("Transport", response.name)
+    }
+
+    @Test
+    fun `should throw CategoryAlreadyExistsException when name already exists`() {
+        val request = CreateCategoryRequest(name = "Transport")
+
+        every { categoryOutputPort.existsByName("Transport") } returns true
+
+        assertThrows<CategoryAlreadyExistsException> { useCase.execute(request) }
+
+        verify(exactly = 0) { categoryOutputPort.save(any()) }
     }
 }

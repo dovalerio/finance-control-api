@@ -24,6 +24,11 @@ class EntryRepositoryAdapter(
     override fun findById(id: Long): Entry? =
         entryJpaRepository.findById(id).map(EntryMapper::toDomain).orElse(null)
 
+    override fun findByPeriod(period: Period): List<Entry> =
+        entryJpaRepository
+            .findByPeriod(period.startDate, period.endDate)
+            .map(EntryMapper::toDomain)
+
     override fun findByPeriodAndCategoryId(period: Period, categoryId: Long): List<Entry> =
         entryJpaRepository
             .findByPeriodAndCategoryId(period.startDate, period.endDate, categoryId)

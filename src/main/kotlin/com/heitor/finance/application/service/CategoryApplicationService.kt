@@ -9,8 +9,8 @@ class CategoryApplicationService(
     private val categoryOutputPort: CategoryOutputPort
 ) : FindCategoryUseCase {
 
-    override fun findAll(): List<CategoryResponse> =
-        categoryOutputPort.findAll().map { CategoryResponse(id = it.id!!, name = it.name) }
+    override fun findAll(name: String?): List<CategoryResponse> =
+        categoryOutputPort.findAll(name).map { CategoryResponse(id = it.id!!, name = it.name) }
 
     override fun findById(id: Long): CategoryResponse {
         val category = categoryOutputPort.findById(id) ?: throw CategoryNotFoundException(id)

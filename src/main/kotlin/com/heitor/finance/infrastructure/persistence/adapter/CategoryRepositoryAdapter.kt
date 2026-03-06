@@ -11,8 +11,8 @@ class CategoryRepositoryAdapter(
     private val categoryJpaRepository: CategoryJpaRepository
 ) : CategoryOutputPort {
 
-    override fun findAll(): List<Category> =
-        categoryJpaRepository.findAllWithSubcategories().map(CategoryMapper::toDomain)
+    override fun findAll(name: String?): List<Category> =
+        categoryJpaRepository.findAllWithSubcategories(name).map(CategoryMapper::toDomain)
 
     override fun findById(id: Long): Category? =
         categoryJpaRepository.findByIdWithSubcategories(id).map(CategoryMapper::toDomain).orElse(null)
@@ -30,4 +30,6 @@ class CategoryRepositoryAdapter(
     override fun deleteById(id: Long) = categoryJpaRepository.deleteById(id)
 
     override fun existsById(id: Long): Boolean = categoryJpaRepository.existsById(id)
+
+    override fun existsByName(name: String): Boolean = categoryJpaRepository.existsByName(name)
 }

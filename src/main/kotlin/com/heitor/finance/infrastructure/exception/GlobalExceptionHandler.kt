@@ -1,5 +1,6 @@
 package com.heitor.finance.infrastructure.exception
 
+import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
 import com.heitor.finance.domain.exception.DomainException
 import com.heitor.finance.domain.exception.InvalidPeriodException
@@ -11,6 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
+
+    @ExceptionHandler(CategoryAlreadyExistsException::class)
+    fun handleCategoryAlreadyExists(ex: CategoryAlreadyExistsException): ProblemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.message ?: "Category already exists")
 
     @ExceptionHandler(CategoryNotFoundException::class)
     fun handleCategoryNotFound(ex: CategoryNotFoundException): ProblemDetail =
