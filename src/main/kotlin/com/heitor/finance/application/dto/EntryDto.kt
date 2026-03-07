@@ -11,7 +11,7 @@ import java.time.LocalDate
 data class CreateEntryRequest(
     val value: BigDecimal,
     val subcategoryId: Long,
-    val date: LocalDate = LocalDate.now(),
+    val date: LocalDate? = null,
     val comment: String? = null
 )
 

@@ -9,8 +9,14 @@ import com.heitor.finance.application.usecase.CreateCategoryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateEntryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateSubcategoryUseCaseImpl
 import com.heitor.finance.application.usecase.DeleteCategoryUseCaseImpl
+import com.heitor.finance.application.usecase.DeleteEntryUseCaseImpl
+import com.heitor.finance.application.usecase.DeleteSubcategoryUseCaseImpl
 import com.heitor.finance.application.usecase.FindBalanceUseCaseImpl
+import com.heitor.finance.application.usecase.FindEntryUseCaseImpl
+import com.heitor.finance.application.usecase.FindSubcategoryUseCaseImpl
 import com.heitor.finance.application.usecase.UpdateCategoryUseCaseImpl
+import com.heitor.finance.application.usecase.UpdateEntryUseCaseImpl
+import com.heitor.finance.application.usecase.UpdateSubcategoryUseCaseImpl
 import com.heitor.finance.domain.service.BalanceCalculatorService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -51,8 +57,36 @@ class UseCaseConfig {
     ) = CreateSubcategoryUseCaseImpl(subcategoryOutputPort, categoryOutputPort)
 
     @Bean
+    fun findSubcategoryUseCase(subcategoryOutputPort: SubcategoryOutputPort) =
+        FindSubcategoryUseCaseImpl(subcategoryOutputPort)
+
+    @Bean
+    fun updateSubcategoryUseCase(
+        subcategoryOutputPort: SubcategoryOutputPort,
+        categoryOutputPort: CategoryOutputPort
+    ) = UpdateSubcategoryUseCaseImpl(subcategoryOutputPort, categoryOutputPort)
+
+    @Bean
+    fun deleteSubcategoryUseCase(subcategoryOutputPort: SubcategoryOutputPort) =
+        DeleteSubcategoryUseCaseImpl(subcategoryOutputPort)
+
+    @Bean
     fun createEntryUseCase(
         entryOutputPort: EntryOutputPort,
         subcategoryOutputPort: SubcategoryOutputPort
     ) = CreateEntryUseCaseImpl(entryOutputPort, subcategoryOutputPort)
+
+    @Bean
+    fun findEntryUseCase(entryOutputPort: EntryOutputPort) =
+        FindEntryUseCaseImpl(entryOutputPort)
+
+    @Bean
+    fun updateEntryUseCase(
+        entryOutputPort: EntryOutputPort,
+        subcategoryOutputPort: SubcategoryOutputPort
+    ) = UpdateEntryUseCaseImpl(entryOutputPort, subcategoryOutputPort)
+
+    @Bean
+    fun deleteEntryUseCase(entryOutputPort: EntryOutputPort) =
+        DeleteEntryUseCaseImpl(entryOutputPort)
 }

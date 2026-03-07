@@ -35,7 +35,7 @@ class CreateEntryUseCaseImpl(
             description = request.comment ?: "",
             amount = amount,
             type = type,
-            date = request.date,
+            date = request.date ?: java.time.LocalDate.now(),
             categoryId = subcategory.categoryId,
             subcategoryId = subcategory.id
         )

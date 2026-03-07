@@ -84,6 +84,49 @@ class EntryRepositoryAdapterTest {
     }
 
     @Test
+    fun `findByFilters should return all entries when no filters`() {
+        every { entryJpaRepository.findAll() } returns listOf(entryEntity)
+
+        val result = adapter.findByFilters(null, null, null)
+
+        assertEquals(1, result.size)
+        assertEquals(100L, result[0].id)
+    }
+
+    @Test
+    fun `findByFilters should filter by subcategoryId only`() {
+        every { entryJpaRepository.findBySubcategoryId(10L) } returns listOf(entryEntity)
+
+        val result = adapter.findByFilters(10L, null, null)
+
+        assertEquals(1, result.size)
+        assertEquals(100L, result[0].id)
+    }
+
+    @Test
+    fun `findByFilters should filter by date range only`() {
+        val start = LocalDate.of(2024, 1, 1)
+        val end = LocalDate.of(2024, 1, 31)
+        every { entryJpaRepository.findByPeriod(start, end) } returns listOf(entryEntity)
+
+        val result = adapter.findByFilters(null, start, end)
+
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `findByFilters should filter by subcategoryId and date range`() {
+        val start = LocalDate.of(2024, 1, 1)
+        val end = LocalDate.of(2024, 1, 31)
+        every { entryJpaRepository.findBySubcategoryIdAndPeriod(10L, start, end) } returns listOf(entryEntity)
+
+        val result = adapter.findByFilters(10L, start, end)
+
+        assertEquals(1, result.size)
+        assertEquals(100L, result[0].id)
+    }
+
+    @Test
     fun `findByPeriod should return entries within period`() {
         val period = Period(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 1, 31))
         every {

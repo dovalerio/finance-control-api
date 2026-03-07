@@ -26,7 +26,7 @@ class CategoryRepositoryAdapterTest {
 
     @Test
     fun `findAll should return list of categories without filter`() {
-        every { categoryJpaRepository.findAllWithSubcategories(null) } returns listOf(categoryEntityWithSubs)
+        every { categoryJpaRepository.findAllWithSubcategories() } returns listOf(categoryEntityWithSubs)
 
         val result = adapter.findAll(null)
 
@@ -38,7 +38,7 @@ class CategoryRepositoryAdapterTest {
 
     @Test
     fun `findAll should return filtered categories by name`() {
-        every { categoryJpaRepository.findAllWithSubcategories("Food") } returns listOf(categoryEntity)
+        every { categoryJpaRepository.findAllWithSubcategoriesByName("Food") } returns listOf(categoryEntity)
 
         val result = adapter.findAll("Food")
 
@@ -48,7 +48,7 @@ class CategoryRepositoryAdapterTest {
 
     @Test
     fun `findAll should return empty list when no categories found`() {
-        every { categoryJpaRepository.findAllWithSubcategories(null) } returns emptyList()
+        every { categoryJpaRepository.findAllWithSubcategories() } returns emptyList()
 
         val result = adapter.findAll(null)
 

@@ -2,6 +2,7 @@ package com.heitor.finance.infrastructure.exception
 
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
+import com.heitor.finance.domain.exception.EntryNotFoundException
 import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.exception.SubcategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
@@ -28,6 +29,13 @@ class GlobalExceptionHandlerTest {
         val result = handler.handleCategoryAlreadyExists(CategoryAlreadyExistsException("Transport"))
         assertThat(result.status).isEqualTo(HttpStatus.CONFLICT.value())
         assertThat(result.detail).contains("Transport")
+    }
+
+    @Test
+    fun `should return 404 for EntryNotFoundException`() {
+        val result = handler.handleEntryNotFound(EntryNotFoundException(10L))
+        assertThat(result.status).isEqualTo(HttpStatus.NOT_FOUND.value())
+        assertThat(result.detail).contains("10")
     }
 
     @Test

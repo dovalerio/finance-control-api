@@ -16,7 +16,12 @@ class CategoryRepositoryAdapter(
 
     override fun findAll(name: String?): List<Category> {
         logger.debug("Finding all categories filter={}" , name ?: "none")
-        return categoryJpaRepository.findAllWithSubcategories(name).map(CategoryMapper::toDomain)
+        val entities = if (name == null) {
+            categoryJpaRepository.findAllWithSubcategories()
+        } else {
+            categoryJpaRepository.findAllWithSubcategoriesByName(name)
+        }
+        return entities.map(CategoryMapper::toDomain)
     }
 
     override fun findById(id: Long): Category? {

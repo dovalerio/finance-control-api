@@ -27,7 +27,7 @@ class SubcategoryRepositoryAdapterTest {
 
     @Test
     fun `findAll should return all subcategories without filters`() {
-        every { subcategoryJpaRepository.findByFilters(null, null) } returns listOf(subcategoryEntity)
+        every { subcategoryJpaRepository.findAll() } returns listOf(subcategoryEntity)
 
         val result = adapter.findAll(null, null)
 
@@ -37,8 +37,8 @@ class SubcategoryRepositoryAdapterTest {
     }
 
     @Test
-    fun `findAll should filter by name`() {
-        every { subcategoryJpaRepository.findByFilters("Snacks", null) } returns listOf(subcategoryEntity)
+    fun `findAll should filter by name only`() {
+        every { subcategoryJpaRepository.findByNameContainingIgnoreCase("Snacks") } returns listOf(subcategoryEntity)
 
         val result = adapter.findAll("Snacks", null)
 
@@ -47,8 +47,8 @@ class SubcategoryRepositoryAdapterTest {
     }
 
     @Test
-    fun `findAll should filter by categoryId`() {
-        every { subcategoryJpaRepository.findByFilters(null, 1L) } returns listOf(subcategoryEntity)
+    fun `findAll should filter by categoryId only`() {
+        every { subcategoryJpaRepository.findByCategoryId(1L) } returns listOf(subcategoryEntity)
 
         val result = adapter.findAll(null, 1L)
 
@@ -57,8 +57,18 @@ class SubcategoryRepositoryAdapterTest {
     }
 
     @Test
+    fun `findAll should filter by name and categoryId`() {
+        every { subcategoryJpaRepository.findByNameContainingIgnoreCaseAndCategoryId("Snacks", 1L) } returns listOf(subcategoryEntity)
+
+        val result = adapter.findAll("Snacks", 1L)
+
+        assertEquals(1, result.size)
+        assertEquals("Snacks", result[0].name)
+    }
+
+    @Test
     fun `findAll should return empty list when no results`() {
-        every { subcategoryJpaRepository.findByFilters(null, null) } returns emptyList()
+        every { subcategoryJpaRepository.findAll() } returns emptyList()
 
         val result = adapter.findAll(null, null)
 

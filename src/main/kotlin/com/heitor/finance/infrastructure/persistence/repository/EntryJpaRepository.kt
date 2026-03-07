@@ -31,4 +31,19 @@ interface EntryJpaRepository : JpaRepository<EntryEntity, Long> {
         @Param("endDate") endDate: LocalDate,
         @Param("categoryId") categoryId: Long
     ): List<EntryEntity>
+
+    fun findBySubcategoryId(subcategoryId: Long): List<EntryEntity>
+
+    @Query(
+        """
+        SELECT e FROM EntryEntity e
+        WHERE e.subcategory.id = :subcategoryId
+        AND e.date BETWEEN :startDate AND :endDate
+        """
+    )
+    fun findBySubcategoryIdAndPeriod(
+        @Param("subcategoryId") subcategoryId: Long,
+        @Param("startDate") startDate: LocalDate,
+        @Param("endDate") endDate: LocalDate
+    ): List<EntryEntity>
 }

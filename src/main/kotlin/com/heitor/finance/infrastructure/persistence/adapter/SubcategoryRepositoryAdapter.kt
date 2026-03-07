@@ -19,7 +19,13 @@ class SubcategoryRepositoryAdapter(
 
     override fun findAll(name: String?, categoryId: Long?): List<Subcategory> {
         logger.debug("Finding subcategories name={} categoryId={}", name ?: "none", categoryId ?: "none")
-        return subcategoryJpaRepository.findByFilters(name, categoryId).map(SubcategoryMapper::toDomain)
+        val entities = when {
+            name != null && categoryId != null -> subcategoryJpaRepository.findByNameContainingIgnoreCaseAndCategoryId(name, categoryId)
+            name != null -> subcategoryJpaRepository.findByNameContainingIgnoreCase(name)
+            categoryId != null -> subcategoryJpaRepository.findByCategoryId(categoryId)
+            else -> subcategoryJpaRepository.findAll()
+        }
+        return entities.map(SubcategoryMapper::toDomain)
     }
 
     override fun findById(id: Long): Subcategory? {

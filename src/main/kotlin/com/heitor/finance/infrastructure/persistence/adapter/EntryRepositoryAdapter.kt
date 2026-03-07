@@ -5,6 +5,7 @@ import com.heitor.finance.domain.exception.CategoryNotFoundException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
 import com.heitor.finance.domain.model.Entry
 import com.heitor.finance.domain.valueobject.Period
+import java.time.LocalDate
 import com.heitor.finance.infrastructure.persistence.mapper.EntryMapper
 import com.heitor.finance.infrastructure.persistence.repository.CategoryJpaRepository
 import com.heitor.finance.infrastructure.persistence.repository.EntryJpaRepository
@@ -20,6 +21,20 @@ class EntryRepositoryAdapter(
 
     override fun findAll(): List<Entry> =
         entryJpaRepository.findAll().map(EntryMapper::toDomain)
+
+    override fun findByFilters(subcategoryId: Long?, startDate: LocalDate?, endDate: LocalDate?): List<Entry> {
+        val entities = when {
+            subcategoryId != null && startDate != null && endDate != null ->
+                entryJpaRepository.findBySubcategoryIdAndPeriod(subcategoryId, startDate, endDate)
+            subcategoryId != null ->
+                entryJpaRepository.findBySubcategoryId(subcategoryId)
+            startDate != null && endDate != null ->
+                entryJpaRepository.findByPeriod(startDate, endDate)
+            else ->
+                entryJpaRepository.findAll()
+        }
+        return entities.map(EntryMapper::toDomain)
+    }
 
     override fun findById(id: Long): Entry? =
         entryJpaRepository.findById(id).map(EntryMapper::toDomain).orElse(null)

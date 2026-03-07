@@ -3,6 +3,7 @@ package com.heitor.finance.infrastructure.exception
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
 import com.heitor.finance.domain.exception.DomainException
+import com.heitor.finance.domain.exception.EntryNotFoundException
 import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.exception.SubcategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
@@ -29,6 +30,12 @@ class GlobalExceptionHandler {
     @ExceptionHandler(SubcategoryNotFoundException::class)
     fun handleSubcategoryNotFound(ex: SubcategoryNotFoundException): ProblemDetail {
         logger.warn("Subcategory not found: {}", ex.message)
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.message ?: "Not found")
+    }
+
+    @ExceptionHandler(EntryNotFoundException::class)
+    fun handleEntryNotFound(ex: EntryNotFoundException): ProblemDetail {
+        logger.warn("Entry not found: {}", ex.message)
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.message ?: "Not found")
     }
 
