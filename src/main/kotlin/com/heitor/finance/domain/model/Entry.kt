@@ -13,7 +13,6 @@ data class Entry(
     val subcategoryId: Long? = null
 ) {
     init {
-        require(description.isNotBlank()) { "Entry description must not be blank" }
         require(!amount.isZero) { "Entry amount must not be zero" }
     }
 }

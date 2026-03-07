@@ -22,7 +22,17 @@ repositories {
     mavenCentral()
 }
 
+// Exclui Logback (default do Spring Boot) para usar Log4j2
+configurations.all {
+    exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+    exclude(group = "ch.qos.logback", module = "logback-classic")
+    exclude(group = "ch.qos.logback", module = "logback-core")
+}
+
 dependencies {
+
+    // Logging — Log4j2 2.24.3 (gerenciado pelo Spring Boot BOM; sem CVEs conhecidos)
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -91,6 +101,10 @@ tasks.test {
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

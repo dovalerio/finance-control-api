@@ -45,7 +45,44 @@ class CategoryControllerTest {
                 .content("""{"name":""}""")
         ).hasStatus(400)
     }
+    @Test
+    fun `POST categories should return 400 when body is missing name field`() {
+        assertThat(
+            mockMvc.post().uri("/v1/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}")
+        ).hasStatus(400)
+    }
 
+    @Test
+    fun `POST categories should return 409 with error detail when category already exists`() {
+        every { createCategoryUseCase.execute(any()) } throws CategoryAlreadyExistsException("Transport")
+
+        val result = mockMvc.post().uri("/v1/categories")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""{"name":"Transport"}""")
+
+        assertThat(result)
+            .hasStatus(409)
+            .bodyJson()
+            .extractingPath("$.detail")
+            .asString()
+            .contains("Transport")
+    }
+
+    @Test
+    fun `GET categories by id should return 404 with error detail when not found`() {
+        every { findCategoryUseCase.findById(99L) } throws CategoryNotFoundException(99L)
+
+        val result = mockMvc.get().uri("/v1/categories/99")
+
+        assertThat(result)
+            .hasStatus(404)
+            .bodyJson()
+            .extractingPath("$.detail")
+            .asString()
+            .contains("99")
+    }
     @Test
     fun `POST categories should return 409 when category already exists`() {
         every { createCategoryUseCase.execute(any()) } throws CategoryAlreadyExistsException("Transport")

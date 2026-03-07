@@ -1,6 +1,8 @@
 package com.heitor.finance.domain.model
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -13,6 +15,13 @@ class CategoryTest {
     }
 
     @Test
+    fun `should default id to null and subcategories to empty`() {
+        val category = Category(name = "Food")
+        assertNull(category.id)
+        assertTrue(category.subcategories.isEmpty())
+    }
+
+    @Test
     fun `should create category with subcategories having unique names`() {
         val sub1 = Subcategory(name = "Bus", categoryId = 1L)
         val sub2 = Subcategory(name = "Train", categoryId = 1L)
@@ -22,7 +31,8 @@ class CategoryTest {
 
     @Test
     fun `should throw when name is blank`() {
-        assertThrows<IllegalArgumentException> { Category(name = "") }
+        val ex = assertThrows<IllegalArgumentException> { Category(name = "") }
+        assertEquals("Category name must not be blank", ex.message)
     }
 
     @Test
@@ -34,9 +44,10 @@ class CategoryTest {
     fun `should throw when subcategory names are duplicated within category`() {
         val sub1 = Subcategory(name = "Bus", categoryId = 1L)
         val sub2 = Subcategory(name = "Bus", categoryId = 1L)
-        assertThrows<IllegalArgumentException> {
+        val ex = assertThrows<IllegalArgumentException> {
             Category(id = 1L, name = "Transport", subcategories = listOf(sub1, sub2))
         }
+        assertEquals("Subcategory names must be unique within a category", ex.message)
     }
 
     @Test

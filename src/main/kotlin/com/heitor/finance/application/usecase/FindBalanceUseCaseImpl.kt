@@ -6,6 +6,7 @@ import com.heitor.finance.application.port.input.FindBalanceUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.domain.exception.CategoryNotFoundException
+import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.model.EntryType
 import com.heitor.finance.domain.service.BalanceCalculatorService
 import com.heitor.finance.domain.valueobject.Money
@@ -23,7 +24,11 @@ class FindBalanceUseCaseImpl(
         endDate: LocalDate,
         categoryId: Long?
     ): BalanceResponse {
-        val period = Period(startDate, endDate)
+        val period = try {
+            Period(startDate, endDate)
+        } catch (ex: IllegalArgumentException) {
+            throw InvalidPeriodException(ex.message ?: "Invalid period")
+        }
 
         if (categoryId == null) {
             val entries = entryOutputPort.findByPeriod(period)

@@ -65,4 +65,49 @@ class BalanceControllerTest {
                 .param("categoryId", "99")
         ).hasStatus(404)
     }
+
+    @Test
+    fun `GET balance should return 400 when startDate is after endDate`() {
+        every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } throws
+            com.heitor.finance.domain.exception.InvalidPeriodException("Start date must not be after end date")
+
+        assertThat(
+            mockMvc.get().uri("/v1/balance")
+                .param("startDate", "2024-02-01")
+                .param("endDate", "2024-01-01")
+        ).hasStatus(400)
+    }
+
+    @Test
+    fun `GET balance should return 400 when startDate is missing`() {
+        assertThat(
+            mockMvc.get().uri("/v1/balance")
+                .param("endDate", "2024-01-31")
+        ).hasStatus(400)
+    }
+
+    @Test
+    fun `GET balance should return 400 when endDate is missing`() {
+        assertThat(
+            mockMvc.get().uri("/v1/balance")
+                .param("startDate", "2024-01-01")
+        ).hasStatus(400)
+    }
+
+    @Test
+    fun `GET balance should return 400 with problem detail body for invalid period`() {
+        every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } throws
+            com.heitor.finance.domain.exception.InvalidPeriodException("Start date must not be after end date")
+
+        val result = mockMvc.get().uri("/v1/balance")
+            .param("startDate", "2024-02-01")
+            .param("endDate", "2024-01-01")
+
+        assertThat(result)
+            .hasStatus(400)
+            .bodyJson()
+            .extractingPath("$.detail")
+            .asString()
+            .contains("Start date")
+    }
 }

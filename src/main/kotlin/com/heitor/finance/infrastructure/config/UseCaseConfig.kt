@@ -3,8 +3,11 @@ package com.heitor.finance.infrastructure.config
 import com.heitor.finance.application.port.input.DeleteCategoryUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.EntryOutputPort
+import com.heitor.finance.application.port.output.SubcategoryOutputPort
 import com.heitor.finance.application.service.CategoryApplicationService
 import com.heitor.finance.application.usecase.CreateCategoryUseCaseImpl
+import com.heitor.finance.application.usecase.CreateEntryUseCaseImpl
+import com.heitor.finance.application.usecase.CreateSubcategoryUseCaseImpl
 import com.heitor.finance.application.usecase.DeleteCategoryUseCaseImpl
 import com.heitor.finance.application.usecase.FindBalanceUseCaseImpl
 import com.heitor.finance.application.usecase.UpdateCategoryUseCaseImpl
@@ -40,4 +43,16 @@ class UseCaseConfig {
         entryOutputPort: EntryOutputPort,
         balanceCalculatorService: BalanceCalculatorService
     ) = FindBalanceUseCaseImpl(categoryOutputPort, entryOutputPort, balanceCalculatorService)
+
+    @Bean
+    fun createSubcategoryUseCase(
+        subcategoryOutputPort: SubcategoryOutputPort,
+        categoryOutputPort: CategoryOutputPort
+    ) = CreateSubcategoryUseCaseImpl(subcategoryOutputPort, categoryOutputPort)
+
+    @Bean
+    fun createEntryUseCase(
+        entryOutputPort: EntryOutputPort,
+        subcategoryOutputPort: SubcategoryOutputPort
+    ) = CreateEntryUseCaseImpl(entryOutputPort, subcategoryOutputPort)
 }

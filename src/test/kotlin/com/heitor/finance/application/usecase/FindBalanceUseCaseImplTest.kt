@@ -3,6 +3,7 @@ package com.heitor.finance.application.usecase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.domain.exception.CategoryNotFoundException
+import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.model.Category
 import com.heitor.finance.domain.model.Entry
 import com.heitor.finance.domain.model.EntryType
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Assertions.assertNotNull
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -72,5 +74,26 @@ class FindBalanceUseCaseImplTest {
         assertThrows<CategoryNotFoundException> {
             useCase.findByPeriodAndCategory(start, end, 99L)
         }
+    }
+
+    @Test
+    fun `should throw InvalidPeriodException when startDate is after endDate`() {
+        val invalidStart = LocalDate.of(2024, 2, 1)
+        val invalidEnd = LocalDate.of(2024, 1, 1)
+
+        assertThrows<InvalidPeriodException> {
+            useCase.findByPeriodAndCategory(invalidStart, invalidEnd, null)
+        }
+    }
+
+    @Test
+    fun `should throw InvalidPeriodException with descriptive message`() {
+        val invalidStart = LocalDate.of(2024, 12, 31)
+        val invalidEnd = LocalDate.of(2024, 1, 1)
+
+        val ex = assertThrows<InvalidPeriodException> {
+            useCase.findByPeriodAndCategory(invalidStart, invalidEnd, null)
+        }
+        assertNotNull(ex.message)
     }
 }

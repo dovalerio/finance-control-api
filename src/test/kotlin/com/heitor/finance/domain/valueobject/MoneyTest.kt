@@ -36,4 +36,22 @@ class MoneyTest {
     fun `isZero should return false for non-zero amount`() {
         assert(!Money.of("0.01").isZero)
     }
+
+    @Test
+    fun `should subtract smaller value and return positive result`() {
+        val result = Money.of("80.00") - Money.of("30.00")
+        assertEquals(Money.of("50.00"), result)
+    }
+
+    @Test
+    fun `should create money from string via factory`() {
+        val money = Money.of("42.50")
+        assertEquals(0, money.amount.compareTo(java.math.BigDecimal("42.50")))
+    }
+
+    @Test
+    fun `toString should format with two decimal places`() {
+        assertEquals("1.50", Money.of("1.5").toString())
+        assertEquals("100.00", Money.of("100").toString())
+    }
 }

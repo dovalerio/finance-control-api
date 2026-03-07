@@ -2,6 +2,8 @@ package com.heitor.finance.domain.model
 
 import com.heitor.finance.domain.valueobject.Money
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -11,7 +13,7 @@ class EntryTest {
     private val date = LocalDate.of(2024, 1, 15)
 
     @Test
-    fun `should create entry with valid data`() {
+    fun `should create EXPENSE entry with valid data`() {
         val entry = Entry(
             description = "Bus ticket",
             amount = Money.of("10.00"),
@@ -21,37 +23,78 @@ class EntryTest {
         )
         assertEquals("Bus ticket", entry.description)
         assertEquals(Money.of("10.00"), entry.amount)
+        assertEquals(EntryType.EXPENSE, entry.type)
+        assertEquals(date, entry.date)
+        assertEquals(1L, entry.categoryId)
     }
 
     @Test
-    fun `should throw when description is blank`() {
-        assertThrows<IllegalArgumentException> {
-            Entry(
-                description = "",
-                amount = Money.of("10.00"),
-                type = EntryType.EXPENSE,
-                date = date,
-                categoryId = 1L
-            )
-        }
+    fun `should create INCOME entry with valid data`() {
+        val entry = Entry(
+            description = "Salary",
+            amount = Money.of("5000.00"),
+            type = EntryType.INCOME,
+            date = date,
+            categoryId = 2L
+        )
+        assertEquals(EntryType.INCOME, entry.type)
+        assertEquals(Money.of("5000.00"), entry.amount)
     }
 
     @Test
-    fun `should throw when description is whitespace only`() {
-        assertThrows<IllegalArgumentException> {
-            Entry(
-                description = "   ",
-                amount = Money.of("10.00"),
-                type = EntryType.EXPENSE,
-                date = date,
-                categoryId = 1L
-            )
-        }
+    fun `should allow blank description`() {
+        val entry = Entry(
+            description = "",
+            amount = Money.of("10.00"),
+            type = EntryType.EXPENSE,
+            date = date,
+            categoryId = 1L
+        )
+        assertEquals("", entry.description)
+    }
+
+    @Test
+    fun `should allow null subcategoryId`() {
+        val entry = Entry(
+            description = "Misc",
+            amount = Money.of("10.00"),
+            type = EntryType.EXPENSE,
+            date = date,
+            categoryId = 1L,
+            subcategoryId = null
+        )
+        assertNull(entry.subcategoryId)
+    }
+
+    @Test
+    fun `should store non-null subcategoryId`() {
+        val entry = Entry(
+            description = "Fuel",
+            amount = Money.of("50.00"),
+            type = EntryType.EXPENSE,
+            date = date,
+            categoryId = 1L,
+            subcategoryId = 7L
+        )
+        assertNotNull(entry.subcategoryId)
+        assertEquals(7L, entry.subcategoryId)
+    }
+
+    @Test
+    fun `should default id to null`() {
+        val entry = Entry(
+            description = "Test",
+            amount = Money.of("1.00"),
+            type = EntryType.INCOME,
+            date = date,
+            categoryId = 1L
+        )
+        assertNull(entry.id)
     }
 
     @Test
     fun `should throw when amount is zero`() {
-        assertThrows<IllegalArgumentException> {
+        val ex = assertThrows<IllegalArgumentException> {
             Entry(
                 description = "Bus ticket",
                 amount = Money.of("0.00"),
@@ -60,6 +103,7 @@ class EntryTest {
                 categoryId = 1L
             )
         }
+        assertEquals("Entry amount must not be zero", ex.message)
     }
 
     @Test

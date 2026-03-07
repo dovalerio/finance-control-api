@@ -26,4 +26,10 @@ object SubcategoryMapper {
         name = entity.name,
         categoryId = entity.category.id!!
     )
+
+    fun toEntity(domain: Subcategory, categoryEntity: CategoryEntity): SubcategoryEntity = SubcategoryEntity(
+        id = domain.id,
+        name = domain.name,
+        category = categoryEntity
+    )
 }

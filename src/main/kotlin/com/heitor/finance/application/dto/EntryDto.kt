@@ -1,24 +1,24 @@
 package com.heitor.finance.application.dto
 
-import com.heitor.finance.domain.model.EntryType
 import java.math.BigDecimal
 import java.time.LocalDate
 
+/**
+ * Alinhado ao contrato api.yml.
+ * value positivo → INCOME (receita)
+ * value negativo → EXPENSE (despesa)
+ */
 data class CreateEntryRequest(
-    val description: String,
-    val amount: BigDecimal,
-    val type: EntryType,
-    val date: LocalDate,
-    val categoryId: Long,
-    val subcategoryId: Long? = null
+    val value: BigDecimal,
+    val subcategoryId: Long,
+    val date: LocalDate = LocalDate.now(),
+    val comment: String? = null
 )
 
 data class EntryResponse(
     val id: Long,
-    val description: String,
-    val amount: BigDecimal,
-    val type: EntryType,
+    val value: BigDecimal,
     val date: LocalDate,
-    val categoryId: Long,
-    val subcategoryId: Long?
+    val subcategoryId: Long?,
+    val comment: String?
 )

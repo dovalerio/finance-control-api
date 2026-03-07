@@ -26,7 +26,6 @@ class BalanceTest {
             income = Money.of("50.00"),
             expense = Money.of("200.00")
         )
-        // Money.minus clamps at ZERO when result is negative
         assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
     }
 
@@ -49,5 +48,28 @@ class BalanceTest {
             expense = Money.ZERO
         )
         assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
+    }
+
+    @Test
+    fun `should store category reference`() {
+        val balance = Balance(
+            category = category,
+            income = Money.of("100.00"),
+            expense = Money.of("40.00")
+        )
+        assertEquals("Transport", balance.category.name)
+        assertEquals(1L, balance.category.id)
+    }
+
+    @Test
+    fun `should accept explicitly overridden net`() {
+        val customNet = Money.of("999.00")
+        val balance = Balance(
+            category = category,
+            income = Money.of("100.00"),
+            expense = Money.of("40.00"),
+            net = customNet
+        )
+        assertEquals(customNet, balance.net)
     }
 }
