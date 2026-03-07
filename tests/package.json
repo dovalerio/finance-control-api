@@ -1,0 +1,15 @@
+{
+  "name": "finance-control-api-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cypress E2E tests for Finance Control API",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:headless": "cypress run --headless --browser electron"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "typescript": "^5.8.2"
+  }
+}
