@@ -11,4 +11,9 @@ data class Entry(
     val date: LocalDate,
     val categoryId: Long,
     val subcategoryId: Long? = null
-)
+) {
+    init {
+        require(description.isNotBlank()) { "Entry description must not be blank" }
+        require(!amount.isZero) { "Entry amount must not be zero" }
+    }
+}

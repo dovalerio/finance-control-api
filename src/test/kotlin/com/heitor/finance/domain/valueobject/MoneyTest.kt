@@ -25,4 +25,15 @@ class MoneyTest {
             Money.of(BigDecimal("-1.00"))
         }
     }
+
+    @Test
+    fun `isZero should return true for zero amount`() {
+        assert(Money.ZERO.isZero)
+        assert(Money.of("0.00").isZero)
+    }
+
+    @Test
+    fun `isZero should return false for non-zero amount`() {
+        assert(!Money.of("0.01").isZero)
+    }
 }

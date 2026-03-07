@@ -11,3 +11,6 @@ class EntryNotFoundException(id: Long) : DomainException("Entry not found with i
 class InvalidPeriodException(message: String) : DomainException(message)
 
 class CategoryAlreadyExistsException(name: String) : DomainException("Category already exists with name='$name'")
+
+class SubcategoryAlreadyExistsException(name: String, categoryId: Long) :
+    DomainException("Subcategory already exists with name='$name' in category id=$categoryId")

@@ -10,6 +10,8 @@ value class Money(val amount: BigDecimal) {
         require(amount >= BigDecimal.ZERO) { "Amount must be non-negative" }
     }
 
+    val isZero: Boolean get() = amount.compareTo(BigDecimal.ZERO) == 0
+
     operator fun plus(other: Money): Money = Money(amount.add(other.amount))
     operator fun minus(other: Money): Money = Money(amount.subtract(other.amount).max(BigDecimal.ZERO))
 
