@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  log4j2-spring.xml — Finance Control API
+  Versão gerenciada pelo Spring Boot BOM (Log4j2 2.24.3 — sem CVEs conhecidos).
+
+  Perfis:
+    dev  → console simples, sem ANSI, template mínimo (acessível para leitores de tela)
+    !dev → console estruturado + arquivo rotacionado
+
+  Mascaramento automático de dados sensíveis em todas as mensagens:
+    api-key, password, token, secret, authorization, bearer
+-->
+<Configuration status="WARN" monitorInterval="60">
+
+    <!-- ================================================================
+         PROPRIEDADES GLOBAIS
+    ================================================================ -->
+    <Properties>
+
+        <!-- Regex que detecta pares chave=valor ou chave: valor sensíveis -->
+        <Property name="MASK_REGEX">(?i)((?:password|passwd|api[-_]?key|token|secret|authorization|bearer)\s*[=:]\s*)\S+</Property>
+        <Property name="MASK_REPLACEMENT">$1[MASKED]</Property>
+
+        <!--
+            Padrão padrão (prod / sem perfil):
+            timestamp completo | nível | thread | logger abreviado | mensagem mascarada
+        -->
+        <Property name="DEFAULT_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%16.16t] %-40.40c{1.} : %replace{%m}{${MASK_REGEX}}{${MASK_REPLACEMENT}}%n%xEx{full}</Property>
+
+        <!--
+            Padrão DEV — acessível para leitores de tela:
+            - Sem cores ANSI
+            - Hora curta (HH:mm:ss)
+            - Nível fixo em 5 chars
+            - Apenas o nome simples da classe (sem pacote)
+            - Mensagem mascarada
+            - Stack trace resumido (primeira linha de cada frame)
+        -->
+        <Property name="DEV_PATTERN">%d{HH:mm:ss} %-5level %c{1} - %replace{%m}{${MASK_REGEX}}{${MASK_REPLACEMENT}}%n%xEx{short}</Property>
+
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="LOG_FILE">${LOG_DIR}/finance-control-api.log</Property>
+        <Property name="LOG_FILE_PATTERN">${LOG_DIR}/finance-control-api.%d{yyyy-MM-dd}.%i.log.gz</Property>
+
+    </Properties>
+
+    <!-- ================================================================
+         APPENDERS
+    ================================================================ -->
+    <Appenders>
+
+        <!-- Console padrão: colorido, detalhado -->
+        <Console name="DefaultConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="${DEFAULT_PATTERN}"/>
+        </Console>
+
+        <!--
+            Console DEV: sem ANSI, linha única, mínimo de ruído.
+            Ideal para leitores de tela e terminais sem suporte a cores.
+        -->
+        <Console name="DevConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="${DEV_PATTERN}" disableAnsi="true"/>
+        </Console>
+
+        <!--
+            Arquivo rotacionado diariamente ou a cada 50 MB.
+            Retém até 30 arquivos.
+            ANSI desabilitado em arquivo.
+        -->
+        <RollingFile name="RollingFile"
+                     fileName="${LOG_FILE}"
+                     filePattern="${LOG_FILE_PATTERN}"
+                     immediateFlush="true">
+            <PatternLayout pattern="${DEFAULT_PATTERN}" disableAnsi="true"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="finance-control-api.*.log.gz"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+    </Appenders>
+
+    <!-- ================================================================
+         LOGGERS — separados por perfil Spring
+    ================================================================ -->
+    <Loggers>
+
+        <!-- ── PERFIL: dev ───────────────────────────────────────────── -->
+        <SpringProfile name="dev">
+
+            <!-- Código da aplicação: DEBUG completo -->
+            <Logger name="com.heitor.finance" level="DEBUG" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+
+            <!-- SQL do Hibernate: DEBUG para visualizar queries no console -->
+            <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+
+            <!-- Parâmetros bind do Hibernate (desabilitar em prod) -->
+            <Logger name="org.hibernate.orm.jdbc.bind" level="TRACE" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+
+            <!-- Spring MVC: exibe mapeamentos e handlers -->
+            <Logger name="org.springframework.web.servlet" level="DEBUG" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+
+            <!-- Reduz ruído de libs externas -->
+            <Logger name="org.springframework" level="INFO" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+            <Logger name="org.hibernate" level="INFO" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+            <Logger name="com.zaxxer.hikari" level="INFO" additivity="false">
+                <AppenderRef ref="DevConsole"/>
+            </Logger>
+
+            <Root level="INFO">
+                <AppenderRef ref="DevConsole"/>
+            </Root>
+
+        </SpringProfile>
+
+        <!-- ── DEMAIS PERFIS (prod / padrão) ────────────────────────── -->
+        <SpringProfile name="!dev">
+
+            <Logger name="com.heitor.finance" level="INFO" additivity="false">
+                <AppenderRef ref="DefaultConsole"/>
+                <AppenderRef ref="RollingFile"/>
+            </Logger>
+
+            <!-- Libera completamente SQL e bind em produção -->
+            <Logger name="org.hibernate.SQL" level="OFF" additivity="false">
+                <AppenderRef ref="RollingFile"/>
+            </Logger>
+            <Logger name="org.hibernate.orm.jdbc.bind" level="OFF" additivity="false">
+                <AppenderRef ref="RollingFile"/>
+            </Logger>
+
+            <Root level="WARN">
+                <AppenderRef ref="DefaultConsole"/>
+                <AppenderRef ref="RollingFile"/>
+            </Root>
+
+        </SpringProfile>
+
+    </Loggers>
+
+</Configuration>

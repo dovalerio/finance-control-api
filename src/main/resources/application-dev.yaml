@@ -6,13 +6,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false      # SQL controlado pelo Log4j2 via org.hibernate.SQL logger
     properties:
       hibernate:
         format_sql: true
-
-logging:
-  level:
-    root: INFO
-    com.heitor.finance: DEBUG
-    org.hibernate.SQL: DEBUG
+        highlight_sql: false  # desabilita ANSI no SQL para acessibilidade
