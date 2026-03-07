@@ -35,141 +35,141 @@ class EntryControllerTest {
     )
 
     @Test
-    fun `POST entries should return 201 with created entry`() {
+    fun `POST lancamentos should return 201 with created entry`() {
         every { createEntryUseCase.execute(any()) } returns entryResponse
 
         assertThat(
-            mockMvc.post().uri("/v1/entries")
+            mockMvc.post().uri("/v1/lancamentos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"value":150.00,"subcategoryId":5,"date":"2024-03-10","comment":"Salary"}""")
+                .content("""{"valor":150.00,"id_subcategoria":5,"data":"2024-03-10","comentario":"Salary"}""")
         ).hasStatus(201)
     }
 
     @Test
-    fun `POST entries should return 201 without optional fields`() {
+    fun `POST lancamentos should return 201 without optional fields`() {
         every { createEntryUseCase.execute(any()) } returns entryResponse
 
         assertThat(
-            mockMvc.post().uri("/v1/entries")
+            mockMvc.post().uri("/v1/lancamentos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"value":150.00,"subcategoryId":5}""")
+                .content("""{"valor":150.00,"id_subcategoria":5}""")
         ).hasStatus(201)
     }
 
     @Test
-    fun `POST entries should return 400 when body is missing required fields`() {
+    fun `POST lancamentos should return 400 when body is missing required fields`() {
         assertThat(
-            mockMvc.post().uri("/v1/entries")
+            mockMvc.post().uri("/v1/lancamentos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         ).hasStatus(400)
     }
 
     @Test
-    fun `POST entries should return 404 when subcategory not found`() {
+    fun `POST lancamentos should return 404 when subcategory not found`() {
         every { createEntryUseCase.execute(any()) } throws SubcategoryNotFoundException(99L)
 
         assertThat(
-            mockMvc.post().uri("/v1/entries")
+            mockMvc.post().uri("/v1/lancamentos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"value":150.00,"subcategoryId":99}""")
+                .content("""{"valor":150.00,"id_subcategoria":99}""")
         ).hasStatus(404)
     }
 
     @Test
-    fun `GET entries should return 200 with all entries`() {
+    fun `GET lancamentos should return 200 with all entries`() {
         every { findEntryUseCase.findAll(null, null, null) } returns listOf(entryResponse)
 
-        assertThat(mockMvc.get().uri("/v1/entries")).hasStatusOk()
+        assertThat(mockMvc.get().uri("/v1/lancamentos")).hasStatusOk()
     }
 
     @Test
-    fun `GET entries should forward subcategoryId filter`() {
+    fun `GET lancamentos should forward id_subcategoria filter`() {
         every { findEntryUseCase.findAll(5L, null, null) } returns listOf(entryResponse)
 
         assertThat(
-            mockMvc.get().uri("/v1/entries").param("subcategoryId", "5")
+            mockMvc.get().uri("/v1/lancamentos").param("id_subcategoria", "5")
         ).hasStatusOk()
     }
 
     @Test
-    fun `GET entries should forward date range filters`() {
+    fun `GET lancamentos should forward date range filters`() {
         every { findEntryUseCase.findAll(null, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31)) } returns listOf(entryResponse)
 
         assertThat(
-            mockMvc.get().uri("/v1/entries")
-                .param("startDate", "2024-03-01")
-                .param("endDate", "2024-03-31")
+            mockMvc.get().uri("/v1/lancamentos")
+                .param("data_inicio", "2024-03-01")
+                .param("data_fim", "2024-03-31")
         ).hasStatusOk()
     }
 
     @Test
-    fun `GET entries by id should return 200 with entry`() {
+    fun `GET lancamentos by id should return 200 with entry`() {
         every { findEntryUseCase.findById(1L) } returns entryResponse
 
-        assertThat(mockMvc.get().uri("/v1/entries/1")).hasStatusOk()
+        assertThat(mockMvc.get().uri("/v1/lancamentos/1")).hasStatusOk()
     }
 
     @Test
-    fun `GET entries by id should return 404 when not found`() {
+    fun `GET lancamentos by id should return 404 when not found`() {
         every { findEntryUseCase.findById(99L) } throws EntryNotFoundException(99L)
 
-        val result = mockMvc.get().uri("/v1/entries/99")
+        val result = mockMvc.get().uri("/v1/lancamentos/99")
 
         assertThat(result)
             .hasStatus(404)
             .bodyJson()
-            .extractingPath("$.detail")
+            .extractingPath("$.mensagem")
             .asString()
             .contains("99")
     }
 
     @Test
-    fun `PUT entries should return 200 with updated entry`() {
+    fun `PUT lancamentos should return 200 with updated entry`() {
         every { updateEntryUseCase.execute(1L, any()) } returns entryResponse
 
         assertThat(
-            mockMvc.put().uri("/v1/entries/1")
+            mockMvc.put().uri("/v1/lancamentos/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"value":200.00,"subcategoryId":5}""")
+                .content("""{"valor":200.00,"id_subcategoria":5}""")
         ).hasStatusOk()
     }
 
     @Test
-    fun `PUT entries should return 404 when entry not found`() {
+    fun `PUT lancamentos should return 404 when entry not found`() {
         every { updateEntryUseCase.execute(99L, any()) } throws EntryNotFoundException(99L)
 
         assertThat(
-            mockMvc.put().uri("/v1/entries/99")
+            mockMvc.put().uri("/v1/lancamentos/99")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"value":200.00,"subcategoryId":5}""")
+                .content("""{"valor":200.00,"id_subcategoria":5}""")
         ).hasStatus(404)
     }
 
     @Test
-    fun `PUT entries should return 404 when subcategory not found`() {
+    fun `PUT lancamentos should return 404 when subcategory not found`() {
         every { updateEntryUseCase.execute(1L, any()) } throws SubcategoryNotFoundException(99L)
 
         assertThat(
-            mockMvc.put().uri("/v1/entries/1")
+            mockMvc.put().uri("/v1/lancamentos/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"value":200.00,"subcategoryId":99}""")
+                .content("""{"valor":200.00,"id_subcategoria":99}""")
         ).hasStatus(404)
     }
 
     @Test
-    fun `DELETE entries should return 204 when deleted`() {
+    fun `DELETE lancamentos should return 204 when deleted`() {
         every { deleteEntryUseCase.execute(1L) } returns Unit
 
-        assertThat(mockMvc.delete().uri("/v1/entries/1")).hasStatus(204)
+        assertThat(mockMvc.delete().uri("/v1/lancamentos/1")).hasStatus(204)
 
         verify { deleteEntryUseCase.execute(1L) }
     }
 
     @Test
-    fun `DELETE entries should return 404 when entry not found`() {
+    fun `DELETE lancamentos should return 404 when entry not found`() {
         every { deleteEntryUseCase.execute(99L) } throws EntryNotFoundException(99L)
 
-        assertThat(mockMvc.delete().uri("/v1/entries/99")).hasStatus(404)
+        assertThat(mockMvc.delete().uri("/v1/lancamentos/99")).hasStatus(404)
     }
 }

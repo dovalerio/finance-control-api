@@ -33,7 +33,7 @@ class ApiKeyAuthFilter(
             )
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             response.contentType = "application/json"
-            response.writer.write("""{"status":401,"title":"Unauthorized","detail":"Invalid or missing api-key header"}""")
+            response.writer.write("""{"codigo":"nao_autorizado","mensagem":"api-key ausente ou inválida"}""")
             return
         }
 

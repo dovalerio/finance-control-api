@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/v1/entries")
+@RequestMapping("/v1/lancamentos")
 class EntryController(
     private val createEntryUseCase: CreateEntryUseCase,
     private val findEntryUseCase: FindEntryUseCase,
@@ -24,29 +24,29 @@ class EntryController(
 
     @GetMapping
     fun findAll(
-        @RequestParam(required = false) subcategoryId: Long?,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate?,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate?
+        @RequestParam("id_subcategoria", required = false) subcategoryId: Long?,
+        @RequestParam("data_inicio", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate?,
+        @RequestParam("data_fim", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate?
     ): ResponseEntity<List<EntryResponse>> =
         ResponseEntity.ok(findEntryUseCase.findAll(subcategoryId, startDate, endDate))
 
-    @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<EntryResponse> =
+    @GetMapping("/{id_lancamento}")
+    fun findById(@PathVariable("id_lancamento") id: Long): ResponseEntity<EntryResponse> =
         ResponseEntity.ok(findEntryUseCase.findById(id))
 
     @PostMapping
     fun create(@Valid @RequestBody request: CreateEntryRequest): ResponseEntity<EntryResponse> =
         ResponseEntity.status(HttpStatus.CREATED).body(createEntryUseCase.execute(request))
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id_lancamento}")
     fun update(
-        @PathVariable id: Long,
+        @PathVariable("id_lancamento") id: Long,
         @Valid @RequestBody request: CreateEntryRequest
     ): ResponseEntity<EntryResponse> =
         ResponseEntity.ok(updateEntryUseCase.execute(id, request))
 
-    @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
+    @DeleteMapping("/{id_lancamento}")
+    fun delete(@PathVariable("id_lancamento") id: Long): ResponseEntity<Void> {
         deleteEntryUseCase.execute(id)
         return ResponseEntity.noContent().build()
     }

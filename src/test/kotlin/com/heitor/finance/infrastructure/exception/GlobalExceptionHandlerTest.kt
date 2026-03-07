@@ -20,69 +20,71 @@ class GlobalExceptionHandlerTest {
     @Test
     fun `should return 404 for CategoryNotFoundException`() {
         val result = handler.handleCategoryNotFound(CategoryNotFoundException(42L))
-        assertThat(result.status).isEqualTo(HttpStatus.NOT_FOUND.value())
-        assertThat(result.detail).contains("42")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
+        assertThat(result.body!!.mensagem).contains("42")
     }
 
     @Test
     fun `should return 409 for CategoryAlreadyExistsException`() {
         val result = handler.handleCategoryAlreadyExists(CategoryAlreadyExistsException("Transport"))
-        assertThat(result.status).isEqualTo(HttpStatus.CONFLICT.value())
-        assertThat(result.detail).contains("Transport")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.CONFLICT)
+        assertThat(result.body!!.mensagem).contains("Transport")
     }
 
     @Test
     fun `should return 404 for EntryNotFoundException`() {
         val result = handler.handleEntryNotFound(EntryNotFoundException(10L))
-        assertThat(result.status).isEqualTo(HttpStatus.NOT_FOUND.value())
-        assertThat(result.detail).contains("10")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
+        assertThat(result.body!!.mensagem).contains("10")
     }
 
     @Test
     fun `should return 404 for SubcategoryNotFoundException`() {
         val result = handler.handleSubcategoryNotFound(SubcategoryNotFoundException(7L))
-        assertThat(result.status).isEqualTo(HttpStatus.NOT_FOUND.value())
-        assertThat(result.detail).contains("7")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
+        assertThat(result.body!!.mensagem).contains("7")
     }
 
     @Test
     fun `should return 409 for SubcategoryAlreadyExistsException`() {
         val result = handler.handleSubcategoryAlreadyExists(SubcategoryAlreadyExistsException("Fuel", 3L))
-        assertThat(result.status).isEqualTo(HttpStatus.CONFLICT.value())
-        assertThat(result.detail).contains("Fuel")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.CONFLICT)
+        assertThat(result.body!!.mensagem).contains("Fuel")
     }
 
     @Test
     fun `should return 400 for InvalidPeriodException`() {
         val result = handler.handleInvalidPeriod(InvalidPeriodException("Start date must not be after end date"))
-        assertThat(result.status).isEqualTo(HttpStatus.BAD_REQUEST.value())
-        assertThat(result.detail).contains("Start date must not be after end date")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+        assertThat(result.body!!.mensagem).contains("Start date must not be after end date")
     }
 
     @Test
     fun `should return 422 for generic DomainException`() {
         val result = handler.handleDomain(CategoryNotFoundException(1L))
-        assertThat(result.status).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value())
+        assertThat(result.statusCode).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY)
     }
 
     @Test
     fun `should return 500 for unexpected exception`() {
         val result = handler.handleUnexpected(RuntimeException("Unexpected"))
-        assertThat(result.status).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value())
-        assertThat(result.detail).doesNotContain("Unexpected")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+        assertThat(result.body!!.mensagem).doesNotContain("Unexpected")
     }
 
     @Test
     fun `should return 400 for HttpMessageNotReadableException`() {
-        val ex = HttpMessageNotReadableException("JSON parse error", MockHttpInputMessage("{}" .toByteArray()))
+        val ex = HttpMessageNotReadableException("JSON parse error", MockHttpInputMessage("{}".toByteArray()))
         val result = handler.handleNotReadable(ex)
-        assertThat(result.status).isEqualTo(HttpStatus.BAD_REQUEST.value())
-        assertThat(result.detail).isEqualTo("Malformed or missing request body")
+        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+        assertThat(result.body!!.mensagem).isEqualTo("Malformed or missing request body")
     }
+
     @Test
     fun `should return 400 for MissingServletRequestParameterException`() {
-        val ex = MissingServletRequestParameterException("startDate", "LocalDate")
+        val ex = MissingServletRequestParameterException("data_inicio", "LocalDate")
         val result = handler.handleMissingParam(ex)
-        assertThat(result.status).isEqualTo(HttpStatus.BAD_REQUEST.value())
-        assertThat(result.detail).contains("startDate")
-    }}
+        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+        assertThat(result.body!!.mensagem).contains("data_inicio")
+    }
+}

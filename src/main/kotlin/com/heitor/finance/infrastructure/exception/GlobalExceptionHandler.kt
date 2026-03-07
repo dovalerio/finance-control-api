@@ -9,12 +9,14 @@ import com.heitor.finance.domain.exception.SubcategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
 import org.apache.logging.log4j.LogManager
 import org.springframework.http.HttpStatus
-import org.springframework.http.ProblemDetail
+import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+
+data class ErrorResponse(val codigo: String, val mensagem: String)
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -22,73 +24,95 @@ class GlobalExceptionHandler {
     private val logger = LogManager.getLogger(GlobalExceptionHandler::class.java)
 
     @ExceptionHandler(SubcategoryAlreadyExistsException::class)
-    fun handleSubcategoryAlreadyExists(ex: SubcategoryAlreadyExistsException): ProblemDetail {
+    fun handleSubcategoryAlreadyExists(ex: SubcategoryAlreadyExistsException): ResponseEntity<ErrorResponse> {
         logger.warn("Subcategory conflict: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.message ?: "Subcategory already exists")
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            ErrorResponse(codigo = "conflito", mensagem = ex.message ?: "Subcategoria já existe")
+        )
     }
 
     @ExceptionHandler(SubcategoryNotFoundException::class)
-    fun handleSubcategoryNotFound(ex: SubcategoryNotFoundException): ProblemDetail {
+    fun handleSubcategoryNotFound(ex: SubcategoryNotFoundException): ResponseEntity<ErrorResponse> {
         logger.warn("Subcategory not found: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.message ?: "Not found")
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            ErrorResponse(codigo = "nao_encontrado", mensagem = ex.message ?: "Not found")
+        )
     }
 
     @ExceptionHandler(EntryNotFoundException::class)
-    fun handleEntryNotFound(ex: EntryNotFoundException): ProblemDetail {
+    fun handleEntryNotFound(ex: EntryNotFoundException): ResponseEntity<ErrorResponse> {
         logger.warn("Entry not found: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.message ?: "Not found")
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            ErrorResponse(codigo = "nao_encontrado", mensagem = ex.message ?: "Not found")
+        )
     }
 
     @ExceptionHandler(CategoryAlreadyExistsException::class)
-    fun handleCategoryAlreadyExists(ex: CategoryAlreadyExistsException): ProblemDetail {
+    fun handleCategoryAlreadyExists(ex: CategoryAlreadyExistsException): ResponseEntity<ErrorResponse> {
         logger.warn("Category conflict: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.message ?: "Category already exists")
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            ErrorResponse(codigo = "conflito", mensagem = ex.message ?: "Categoria já existe")
+        )
     }
 
     @ExceptionHandler(CategoryNotFoundException::class)
-    fun handleCategoryNotFound(ex: CategoryNotFoundException): ProblemDetail {
+    fun handleCategoryNotFound(ex: CategoryNotFoundException): ResponseEntity<ErrorResponse> {
         logger.warn("Category not found: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.message ?: "Not found")
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            ErrorResponse(codigo = "nao_encontrado", mensagem = ex.message ?: "Not found")
+        )
     }
 
     @ExceptionHandler(InvalidPeriodException::class)
-    fun handleInvalidPeriod(ex: InvalidPeriodException): ProblemDetail {
+    fun handleInvalidPeriod(ex: InvalidPeriodException): ResponseEntity<ErrorResponse> {
         logger.warn("Invalid period: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.message ?: "Invalid period")
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            ErrorResponse(codigo = "periodo_invalido", mensagem = ex.message ?: "Período inválido")
+        )
     }
 
     @ExceptionHandler(DomainException::class)
-    fun handleDomain(ex: DomainException): ProblemDetail {
+    fun handleDomain(ex: DomainException): ResponseEntity<ErrorResponse> {
         logger.warn("Domain exception type={} message={}", ex::class.simpleName, ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.message ?: "Domain error")
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+            ErrorResponse(codigo = "erro_dominio", mensagem = ex.message ?: "Erro de domínio")
+        )
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidation(ex: MethodArgumentNotValidException): ProblemDetail {
+    fun handleValidation(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val detail = ex.bindingResult.fieldErrors
             .joinToString("; ") { "${it.field}: ${it.defaultMessage}" }
         logger.warn("Validation error: {}", detail)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            ErrorResponse(codigo = "erro_validacao", mensagem = detail)
+        )
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
-    fun handleMissingParam(ex: MissingServletRequestParameterException): ProblemDetail {
+    fun handleMissingParam(ex: MissingServletRequestParameterException): ResponseEntity<ErrorResponse> {
         logger.warn("Missing required parameter: {}", ex.parameterName)
-        return ProblemDetail.forStatusAndDetail(
-            HttpStatus.BAD_REQUEST,
-            "Required parameter '${ex.parameterName}' is missing"
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            ErrorResponse(
+                codigo = "parametro_ausente",
+                mensagem = "Required parameter '${ex.parameterName}' is missing"
+            )
         )
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleNotReadable(ex: HttpMessageNotReadableException): ProblemDetail {
+    fun handleNotReadable(ex: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
         logger.warn("Malformed request body: {}", ex.message)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Malformed or missing request body")
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            ErrorResponse(codigo = "corpo_invalido", mensagem = "Malformed or missing request body")
+        )
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleUnexpected(ex: Exception): ProblemDetail {
+    fun handleUnexpected(ex: Exception): ResponseEntity<ErrorResponse> {
         logger.error("Unexpected error type={}", ex::class.simpleName, ex)
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred")
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+            ErrorResponse(codigo = "erro_interno", mensagem = "Erro interno do servidor")
+        )
     }
 }

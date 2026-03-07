@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/subcategories")
+@RequestMapping("/v1/subcategorias")
 class SubcategoryController(
     private val createSubcategoryUseCase: CreateSubcategoryUseCase,
     private val findSubcategoryUseCase: FindSubcategoryUseCase,
@@ -22,28 +22,28 @@ class SubcategoryController(
 
     @GetMapping
     fun findAll(
-        @RequestParam(required = false) name: String?,
-        @RequestParam(required = false) categoryId: Long?
+        @RequestParam("nome", required = false) name: String?,
+        @RequestParam("id_categoria", required = false) categoryId: Long?
     ): ResponseEntity<List<SubcategoryResponse>> =
         ResponseEntity.ok(findSubcategoryUseCase.findAll(name, categoryId))
 
-    @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<SubcategoryResponse> =
+    @GetMapping("/{id_subcategoria}")
+    fun findById(@PathVariable("id_subcategoria") id: Long): ResponseEntity<SubcategoryResponse> =
         ResponseEntity.ok(findSubcategoryUseCase.findById(id))
 
     @PostMapping
     fun create(@Valid @RequestBody request: CreateSubcategoryRequest): ResponseEntity<SubcategoryResponse> =
         ResponseEntity.status(HttpStatus.CREATED).body(createSubcategoryUseCase.execute(request))
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id_subcategoria}")
     fun update(
-        @PathVariable id: Long,
+        @PathVariable("id_subcategoria") id: Long,
         @Valid @RequestBody request: CreateSubcategoryRequest
     ): ResponseEntity<SubcategoryResponse> =
         ResponseEntity.ok(updateSubcategoryUseCase.execute(id, request))
 
-    @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
+    @DeleteMapping("/{id_subcategoria}")
+    fun delete(@PathVariable("id_subcategoria") id: Long): ResponseEntity<Void> {
         deleteSubcategoryUseCase.execute(id)
         return ResponseEntity.noContent().build()
     }

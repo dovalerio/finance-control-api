@@ -3,6 +3,7 @@ openapi: 3.0.3
 info:
   title: Finance Control API
   version: 1.0.0
+  description: API para controle financeiro
 
 servers:
   - url: http://localhost:8080/v1
@@ -12,62 +13,62 @@ security:
 
 paths:
 
-  /categories:
+  /categorias:
     get:
-      summary: List categories
+      summary: Listar categorias
       parameters:
-        - name: name
+        - name: nome
           in: query
           required: false
           schema:
             type: string
       responses:
         '200':
-          description: Category list
+          description: Lista de categorias
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Category'
+                  $ref: '#/components/schemas/Categoria'
 
     post:
-      summary: Create category
+      summary: Criar categoria
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCategoryRequest'
+              $ref: '#/components/schemas/CriarCategoriaRequest'
       responses:
         '201':
-          description: Category created
+          description: Categoria criada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/Categoria'
 
-  /categories/{id}:
+  /categorias/{id_categoria}:
     get:
-      summary: Get category by id
+      summary: Buscar categoria por id
       parameters:
-        - name: id
+        - name: id_categoria
           in: path
           required: true
           schema:
             type: integer
       responses:
         '200':
-          description: Category
+          description: Categoria encontrada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/Categoria'
 
     put:
-      summary: Update category
+      summary: Atualizar categoria
       parameters:
-        - name: id
+        - name: id_categoria
           in: path
           required: true
           schema:
@@ -77,88 +78,83 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCategoryRequest'
+              $ref: '#/components/schemas/CriarCategoriaRequest'
       responses:
         '200':
-          description: Category updated
+          description: Categoria atualizada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/Categoria'
 
     delete:
-      summary: Delete category
+      summary: Excluir categoria
       parameters:
-        - name: id
+        - name: id_categoria
           in: path
           required: true
           schema:
             type: integer
       responses:
         '204':
-          description: Category deleted
+          description: Categoria excluída
 
-  /subcategories:
+  /subcategorias:
     get:
-      summary: List subcategories
+      summary: Listar subcategorias
       parameters:
-        - name: name
+        - name: nome
           in: query
           required: false
           schema:
             type: string
-        - name: categoryId
-          in: query
-          required: false
-          schema:
-            type: integer
       responses:
         '200':
-          description: Subcategory list
+          description: Lista de subcategorias
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Subcategory'
+                  $ref: '#/components/schemas/Subcategoria'
 
     post:
-      summary: Create subcategory
+      summary: Criar subcategoria
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSubcategoryRequest'
+              $ref: '#/components/schemas/CriarSubcategoriaRequest'
       responses:
         '201':
-          description: Subcategory created
+          description: Subcategoria criada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subcategory'
+                $ref: '#/components/schemas/Subcategoria'
 
-  /subcategories/{id}:
+  /subcategorias/{id_subcategoria}:
     get:
-      summary: Get subcategory by id
+      summary: Buscar subcategoria por id
       parameters:
-        - name: id
+        - name: id_subcategoria
           in: path
           required: true
           schema:
             type: integer
       responses:
         '200':
-          description: Subcategory
+          description: Subcategoria encontrada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subcategory'
+                $ref: '#/components/schemas/Subcategoria'
 
     put:
-      summary: Update subcategory
+      summary: Atualizar subcategoria
       parameters:
-        - name: id
+        - name: id_subcategoria
           in: path
           required: true
           schema:
@@ -168,43 +164,43 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSubcategoryRequest'
+              $ref: '#/components/schemas/CriarSubcategoriaRequest'
       responses:
         '200':
-          description: Subcategory updated
+          description: Subcategoria atualizada
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Subcategory'
+                $ref: '#/components/schemas/Subcategoria'
 
     delete:
-      summary: Delete subcategory
+      summary: Excluir subcategoria
       parameters:
-        - name: id
+        - name: id_subcategoria
           in: path
           required: true
           schema:
             type: integer
       responses:
         '204':
-          description: Subcategory deleted
+          description: Subcategoria excluída
 
-  /entries:
+  /lancamentos:
     get:
-      summary: List entries
+      summary: Listar lançamentos
       parameters:
-        - name: subcategoryId
+        - name: id_subcategoria
           in: query
           required: false
           schema:
             type: integer
-        - name: startDate
+        - name: data_inicio
           in: query
           required: false
           schema:
             type: string
             format: date
-        - name: endDate
+        - name: data_fim
           in: query
           required: false
           schema:
@@ -212,51 +208,51 @@ paths:
             format: date
       responses:
         '200':
-          description: Entry list
+          description: Lista de lançamentos
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Entry'
+                  $ref: '#/components/schemas/Lancamento'
 
     post:
-      summary: Create entry
+      summary: Criar lançamento
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateEntryRequest'
+              $ref: '#/components/schemas/CriarLancamentoRequest'
       responses:
         '201':
-          description: Entry created
+          description: Lançamento criado
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Entry'
+                $ref: '#/components/schemas/Lancamento'
 
-  /entries/{id}:
+  /lancamentos/{id_lancamento}:
     get:
-      summary: Get entry by id
+      summary: Buscar lançamento
       parameters:
-        - name: id
+        - name: id_lancamento
           in: path
           required: true
           schema:
             type: integer
       responses:
         '200':
-          description: Entry
+          description: Lançamento
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Entry'
+                $ref: '#/components/schemas/Lancamento'
 
     put:
-      summary: Update entry
+      summary: Atualizar lançamento
       parameters:
-        - name: id
+        - name: id_lancamento
           in: path
           required: true
           schema:
@@ -266,55 +262,55 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateEntryRequest'
+              $ref: '#/components/schemas/CriarLancamentoRequest'
       responses:
         '200':
-          description: Entry updated
+          description: Lançamento atualizado
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Entry'
+                $ref: '#/components/schemas/Lancamento'
 
     delete:
-      summary: Delete entry
+      summary: Excluir lançamento
       parameters:
-        - name: id
+        - name: id_lancamento
           in: path
           required: true
           schema:
             type: integer
       responses:
         '204':
-          description: Entry deleted
+          description: Lançamento excluído
 
-  /balance:
+  /balanco:
     get:
-      summary: Calculate balance
+      summary: Calcular balanço
       parameters:
-        - name: startDate
+        - name: data_inicio
           in: query
           required: true
           schema:
             type: string
             format: date
-        - name: endDate
+        - name: data_fim
           in: query
           required: true
           schema:
             type: string
             format: date
-        - name: categoryId
+        - name: id_categoria
           in: query
           required: false
           schema:
             type: integer
       responses:
         '200':
-          description: Balance result
+          description: Resultado do balanço
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Balance'
+                $ref: '#/components/schemas/Balanco'
 
 components:
 
@@ -326,82 +322,88 @@ components:
 
   schemas:
 
-    Category:
+    Categoria:
       type: object
       properties:
-        id:
+        id_categoria:
           type: integer
-        name:
+        nome:
           type: string
 
-    CreateCategoryRequest:
+    CriarCategoriaRequest:
       type: object
       required:
-        - name
+        - nome
       properties:
-        name:
+        nome:
           type: string
 
-    Subcategory:
+    Subcategoria:
       type: object
       properties:
-        id:
+        id_subcategoria:
           type: integer
-        name:
+        nome:
           type: string
-        categoryId:
+        id_categoria:
           type: integer
 
-    CreateSubcategoryRequest:
+    CriarSubcategoriaRequest:
       type: object
       required:
-        - name
-        - categoryId
+        - nome
+        - id_categoria
       properties:
-        name:
+        nome:
           type: string
-        categoryId:
+        id_categoria:
           type: integer
 
-    Entry:
+    Lancamento:
       type: object
       properties:
-        id:
+        id_lancamento:
           type: integer
-        value:
+        valor:
           type: number
-        date:
+        data:
           type: string
           format: date
-        subcategoryId:
+        id_subcategoria:
           type: integer
-        comment:
+        comentario:
           type: string
 
-    CreateEntryRequest:
+    CriarLancamentoRequest:
       type: object
       required:
-        - value
-        - subcategoryId
+        - valor
+        - id_subcategoria
       properties:
-        value:
+        valor:
           type: number
-        date:
+        data:
           type: string
           format: date
-        subcategoryId:
+        id_subcategoria:
           type: integer
-        comment:
+        comentario:
           type: string
 
-    Balance:
+    Balanco:
       type: object
       properties:
-        category:
-          $ref: '#/components/schemas/Category'
-        revenue:
+        receita:
           type: number
-        expense:
+        despesa:
           type: number
-        balance:
+        saldo:
           type: number
+
+    Erro:
+      type: object
+      properties:
+        codigo:
+          type: string
+        mensagem:
+          type: string

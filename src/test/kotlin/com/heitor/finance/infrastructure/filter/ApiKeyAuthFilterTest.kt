@@ -55,7 +55,7 @@ class ApiKeyAuthFilterTest {
         filter.doFilter(request, response, chain)
 
         assert(response.contentType == "application/json")
-        assert(response.contentAsString.contains("401"))
+        assert(response.contentAsString.contains("nao_autorizado"))
     }
 
     @Test

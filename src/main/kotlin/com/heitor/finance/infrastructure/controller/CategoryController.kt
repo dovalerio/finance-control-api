@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/v1/categories")
+@RequestMapping("/v1/categorias")
 class CategoryController(
     private val createCategoryUseCase: CreateCategoryUseCase,
     private val findCategoryUseCase: FindCategoryUseCase,
@@ -21,16 +21,16 @@ class CategoryController(
 ) {
 
     @GetMapping
-    fun findAll(@RequestParam(required = false) name: String?): ResponseEntity<List<CategoryResponse>> =
+    fun findAll(@RequestParam("nome", required = false) name: String?): ResponseEntity<List<CategoryResponse>> =
         ResponseEntity.ok(findCategoryUseCase.findAll(name))
 
-    @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<CategoryResponse> =
+    @GetMapping("/{id_categoria}")
+    fun findById(@PathVariable("id_categoria") id: Long): ResponseEntity<CategoryResponse> =
         ResponseEntity.ok(findCategoryUseCase.findById(id))
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id_categoria}")
     fun update(
-        @PathVariable id: Long,
+        @PathVariable("id_categoria") id: Long,
         @Valid @RequestBody request: CreateCategoryRequest
     ): ResponseEntity<CategoryResponse> =
         ResponseEntity.ok(updateCategoryUseCase.execute(id, request))
@@ -39,8 +39,8 @@ class CategoryController(
     fun create(@Valid @RequestBody request: CreateCategoryRequest): ResponseEntity<CategoryResponse> =
         ResponseEntity.status(HttpStatus.CREATED).body(createCategoryUseCase.execute(request))
 
-    @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
+    @DeleteMapping("/{id_categoria}")
+    fun delete(@PathVariable("id_categoria") id: Long): ResponseEntity<Void> {
         deleteCategoryUseCase.execute(id)
         return ResponseEntity.noContent().build()
     }

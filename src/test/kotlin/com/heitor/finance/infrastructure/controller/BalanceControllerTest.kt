@@ -22,7 +22,7 @@ class BalanceControllerTest {
     ) { it.setControllerAdvice(GlobalExceptionHandler()).build() }
 
     @Test
-    fun `GET balance should return 200 with category when categoryId provided`() {
+    fun `GET balanco should return 200 with category when id_categoria provided`() {
         every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), 1L) } returns BalanceResponse(
             category = CategoryResponse(id = 1L, name = "Transport"),
             revenue = BigDecimal("200.00"),
@@ -31,15 +31,15 @@ class BalanceControllerTest {
         )
 
         assertThat(
-            mockMvc.get().uri("/v1/balance")
-                .param("startDate", "2024-01-01")
-                .param("endDate", "2024-01-31")
-                .param("categoryId", "1")
+            mockMvc.get().uri("/v1/balanco")
+                .param("data_inicio", "2024-01-01")
+                .param("data_fim", "2024-01-31")
+                .param("id_categoria", "1")
         ).hasStatusOk()
     }
 
     @Test
-    fun `GET balance should return 200 without category when categoryId not provided`() {
+    fun `GET balanco should return 200 without category when id_categoria not provided`() {
         every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } returns BalanceResponse(
             category = null,
             revenue = BigDecimal("500.00"),
@@ -48,65 +48,65 @@ class BalanceControllerTest {
         )
 
         assertThat(
-            mockMvc.get().uri("/v1/balance")
-                .param("startDate", "2024-01-01")
-                .param("endDate", "2024-01-31")
+            mockMvc.get().uri("/v1/balanco")
+                .param("data_inicio", "2024-01-01")
+                .param("data_fim", "2024-01-31")
         ).hasStatusOk()
     }
 
     @Test
-    fun `GET balance should return 404 when category not found`() {
+    fun `GET balanco should return 404 when category not found`() {
         every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), 99L) } throws CategoryNotFoundException(99L)
 
         assertThat(
-            mockMvc.get().uri("/v1/balance")
-                .param("startDate", "2024-01-01")
-                .param("endDate", "2024-01-31")
-                .param("categoryId", "99")
+            mockMvc.get().uri("/v1/balanco")
+                .param("data_inicio", "2024-01-01")
+                .param("data_fim", "2024-01-31")
+                .param("id_categoria", "99")
         ).hasStatus(404)
     }
 
     @Test
-    fun `GET balance should return 400 when startDate is after endDate`() {
+    fun `GET balanco should return 400 when data_inicio is after data_fim`() {
         every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } throws
             com.heitor.finance.domain.exception.InvalidPeriodException("Start date must not be after end date")
 
         assertThat(
-            mockMvc.get().uri("/v1/balance")
-                .param("startDate", "2024-02-01")
-                .param("endDate", "2024-01-01")
+            mockMvc.get().uri("/v1/balanco")
+                .param("data_inicio", "2024-02-01")
+                .param("data_fim", "2024-01-01")
         ).hasStatus(400)
     }
 
     @Test
-    fun `GET balance should return 400 when startDate is missing`() {
+    fun `GET balanco should return 400 when data_inicio is missing`() {
         assertThat(
-            mockMvc.get().uri("/v1/balance")
-                .param("endDate", "2024-01-31")
+            mockMvc.get().uri("/v1/balanco")
+                .param("data_fim", "2024-01-31")
         ).hasStatus(400)
     }
 
     @Test
-    fun `GET balance should return 400 when endDate is missing`() {
+    fun `GET balanco should return 400 when data_fim is missing`() {
         assertThat(
-            mockMvc.get().uri("/v1/balance")
-                .param("startDate", "2024-01-01")
+            mockMvc.get().uri("/v1/balanco")
+                .param("data_inicio", "2024-01-01")
         ).hasStatus(400)
     }
 
     @Test
-    fun `GET balance should return 400 with problem detail body for invalid period`() {
+    fun `GET balanco should return 400 with error body for invalid period`() {
         every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } throws
             com.heitor.finance.domain.exception.InvalidPeriodException("Start date must not be after end date")
 
-        val result = mockMvc.get().uri("/v1/balance")
-            .param("startDate", "2024-02-01")
-            .param("endDate", "2024-01-01")
+        val result = mockMvc.get().uri("/v1/balanco")
+            .param("data_inicio", "2024-02-01")
+            .param("data_fim", "2024-01-01")
 
         assertThat(result)
             .hasStatus(400)
             .bodyJson()
-            .extractingPath("$.detail")
+            .extractingPath("$.mensagem")
             .asString()
             .contains("Start date")
     }

@@ -1,10 +1,12 @@
 package com.heitor.finance.application.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 
 data class BalanceResponse(
-    val category: CategoryResponse?,
-    val revenue: BigDecimal,
-    val expense: BigDecimal,
-    val balance: BigDecimal
+    @JsonIgnore val category: CategoryResponse?,
+    @JsonProperty("receita") val revenue: BigDecimal,
+    @JsonProperty("despesa") val expense: BigDecimal,
+    @JsonProperty("saldo") val balance: BigDecimal
 )

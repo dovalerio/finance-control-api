@@ -2,484 +2,525 @@
 
 ## Project Context
 
-This project must strictly follow the versions and tooling defined in `build.gradle.kts`.
+This project must strictly comply with the specification defined in the challenge document **"Desafio: API de Controle Financeiro"**.
 
-### Required Versions
-- Gradle: 9.3.1
-- Java: 21
-- Kotlin: 2.2.21
-- Spring Boot: 4.0.3
-- Spring Dependency Management Plugin: 1.1.7
+All generated code must respect the contract defined in that document, even if the existing code currently differs.
 
-Do not suggest code, plugins, dependencies, syntax, or configurations incompatible with these versions.
+---
 
-## Official Sources First
+# API Contract Alignment
+
+The public API must follow the naming and structure defined in the challenge specification.
+
+Expected routes:
+
+- `/v1/categorias`
+- `/v1/subcategorias`
+- `/v1/lancamentos`
+- `/v1/balanco`
+
+Do **not expose English resource names** in the public API.
+
+### Query parameters
+
+The API must use the following parameters:
+
+- `data_inicio`
+- `data_fim`
+- `id_categoria`
+- `id_subcategoria`
+
+### JSON field names
+
+All response and request payloads must follow the specification naming:
+
+- `id_categoria`
+- `id_subcategoria`
+- `id_lancamento`
+- `nome`
+- `valor`
+- `data`
+- `comentario`
+
+Do not introduce alternative field names unless explicitly required.
+
+### Date format
+
+Dates must be compatible with the examples in the challenge specification.
+
+---
+
+# Error Response Contract
+
+All API errors must follow the exact structure defined in the challenge.
+
+Error response example:
+
+```json
+{
+  "codigo": "erro_validacao",
+  "mensagem": "O campo 'nome' é obrigatório"
+}
+````
+
+Error responses must always include:
+
+* HTTP status code
+* `codigo`
+* `mensagem`
+
+Do **not return Spring `ProblemDetail`** or framework-specific error formats.
+
+Error codes must be consistent and reusable.
+
+---
+
+# Required Versions
+
+The project must strictly follow the versions defined in `build.gradle.kts`.
+
+* Gradle: **9.3.1**
+* Java: **21**
+* Kotlin: **2.2.21**
+* Spring Boot: **4.0.3**
+* Spring Dependency Management Plugin: **1.1.7**
+
+Do not suggest code incompatible with these versions.
+
+---
+
+# Official Sources First
 
 Always prioritize:
+
 1. Spring official documentation
 2. Kotlin official documentation
 3. Gradle official documentation
 4. Official library documentation
 
-Do not generate code based on outdated blog posts, deprecated APIs, or unofficial patterns when an official solution exists.
+Avoid outdated blogs or unofficial patterns.
 
-## Language and Naming Rules
+---
 
-All code artifacts must be written in English:
-- class names
-- interface names
-- method names
-- variable names
-- file names
-- enum names
-- package names
-- test names
+# Language and Naming Rules
 
-Do not use Portuguese names in source code.
+All source code artifacts must be written in **English**:
 
-Examples:
-- `CategoryEntity`
-- `CreateCategoryUseCase`
-- `BalanceController`
-- `categoryRepository`
-- `findByName`
-- `application-prod.yaml`
+* class names
+* interfaces
+* method names
+* variables
+* file names
+* enums
+* packages
+* test names
 
-## Kotlin Rules
+Do **not use Portuguese names in source code**.
 
-Prefer idiomatic Kotlin and native Kotlin language features available in Kotlin 2.2.21.
+Example naming:
+
+* `CategoryEntity`
+* `CreateCategoryUseCase`
+* `BalanceController`
+* `categoryRepository`
+* `findByName`
+* `application-prod.yaml`
+
+Portuguese is only allowed in **API payload fields**, because they follow the challenge contract.
+
+---
+
+# Kotlin Rules
+
+Prefer idiomatic Kotlin using features available in **Kotlin 2.2.21**.
 
 ### Prefer
-- `data class` for immutable DTOs and simple domain models
-- `sealed interface` or `sealed class` for controlled hierarchies
-- `value class` with `@JvmInline` for lightweight typed wrappers when appropriate
-- constructor injection
-- nullable types only when truly necessary
-- `val` by default
-- extension functions for reusable transformations and utilities
-- expression bodies when readability improves
-- `when` instead of long `if/else` chains when applicable
-- top-level functions for stateless helpers when that improves clarity
-- Kotlin collection operators when they improve readability without hiding intent
+
+* `data class`
+* `sealed class` / `sealed interface`
+* `@JvmInline value class`
+* constructor injection
+* `val` by default
+* extension functions
+* expression bodies
+* `when` expressions
+* Kotlin collection operators
 
 ### Avoid
-- unnecessary mutable state
-- `var` unless mutation is required
-- Java-style boilerplate
-- manual getters/setters without reason
-- `Optional` in Kotlin code
-- static utility classes
-- broad use of `!!`
-- meaningless scope function chains
-- overuse of `lateinit`
 
-### Scope Functions
-Use Kotlin scope functions carefully and only when they improve clarity:
-- `let` for nullable mapping or small transformations
-- `run` for scoped computation
-- `apply` for object setup
-- `also` for side effects such as logging
-- `with` only when it clearly improves readability
+* mutable state unless necessary
+* `var` when not required
+* Java-style boilerplate
+* manual getters/setters
+* `Optional`
+* static utility classes
+* `!!`
+* confusing scope function chains
+* excessive `lateinit`
 
-Do not chain scope functions in a confusing way.
+---
 
-## Kotlin Coding Conventions
+# Kotlin Coding Conventions
 
-Follow Kotlin official coding conventions:
-- keep files cohesive
-- use clear package organization
-- keep declarations readable
-- prefer small and focused functions
-- keep visibility as narrow as possible
-- avoid abbreviations
-- organize code consistently
+Follow official Kotlin style guidelines:
 
-## Spring Rules
+* cohesive files
+* clear package organization
+* readable declarations
+* small focused functions
+* narrow visibility
+* avoid abbreviations
+* consistent structure
 
-Prefer native Spring Boot 4.0.3 and Spring Framework 7 features before introducing extra libraries.
+---
 
-### Use Native Spring Features First
-- `@RestController`
-- `@RequestMapping`
-- `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`
-- `@ConfigurationProperties`
-- `@Validated`
-- Bean Validation with Jakarta Validation
-- `ProblemDetail` for HTTP error responses when appropriate
-- Spring Data JPA repositories
-- Actuator for health and metrics
-- Spring MVC features already included by the project
+# Spring Rules
 
-Do not introduce libraries that duplicate built-in Spring capabilities without a strong reason.
+Prefer **native Spring Boot 4.0.3 / Spring Framework 7** features.
 
-### Dependency Constraints
-Only use dependencies already present in `build.gradle.kts`, unless a missing dependency is explicitly requested and justified.
+### Prefer native features
 
-Current project dependencies include:
-- spring-boot-starter-webmvc
-- spring-boot-starter-data-jpa
-- spring-boot-starter-validation
-- spring-boot-starter-actuator
-- kotlin-reflect
-- jackson-module-kotlin
-- postgresql
-- test dependencies already declared in the build
+* `@RestController`
+* `@RequestMapping`
+* `@GetMapping`
+* `@PostMapping`
+* `@PutMapping`
+* `@DeleteMapping`
+* `@ConfigurationProperties`
+* `@Validated`
+* Jakarta Bean Validation
+* Spring Data JPA
+* Spring Actuator
 
-Do not assume Spring Security, WebFlux, Redis, Kafka, MapStruct, Lombok, or other libraries are available unless they are explicitly added to the build.
+Do not introduce libraries duplicating Spring functionality.
 
-## Architecture Rules
+---
 
-The project should follow Hexagonal Architecture.
+# Dependency Constraints
+
+Use only dependencies defined in `build.gradle.kts`.
+
+Current dependencies include:
+
+* `spring-boot-starter-webmvc`
+* `spring-boot-starter-data-jpa`
+* `spring-boot-starter-validation`
+* `spring-boot-starter-actuator`
+* `kotlin-reflect`
+* `jackson-module-kotlin`
+* `postgresql`
+
+Do not assume availability of:
+
+* Spring Security
+* WebFlux
+* Redis
+* Kafka
+* MapStruct
+* Lombok
+
+unless explicitly added.
+
+---
+
+# Architecture Rules
+
+The project follows **Hexagonal Architecture**.
 
 ### Layers
-- `domain`
-- `application`
-- `infrastructure`
-- `shared` only when truly necessary
 
-### Responsibilities
+* `domain`
+* `application`
+* `infrastructure`
+* `shared` (only if necessary)
 
-#### domain
+### Domain
+
 Contains:
-- domain models
-- value objects
-- domain services
-- business rules
-- domain exceptions
 
-Must not depend on Spring annotations or framework types.
+* domain models
+* value objects
+* domain services
+* business rules
+* domain exceptions
 
-#### application
+Must not depend on Spring.
+
+### Application
+
 Contains:
-- use cases
-- input ports
-- output ports
-- orchestration services
 
-Should coordinate business actions without leaking infrastructure concerns.
+* use cases
+* input ports
+* output ports
+* orchestration services
 
-#### infrastructure
+### Infrastructure
+
 Contains:
-- controllers
-- JPA entities
-- repository adapters
-- external integrations
-- configuration classes
-- filters
-- serializers
 
-Framework-specific code belongs here.
+* controllers
+* JPA entities
+* repository adapters
+* configuration
+* filters
+* external integrations
 
-## API Rules
+---
 
-Base path:
-- `/v1`
+# Security Rule
 
-Resource paths must use kebab-case and lowercase only.
+All API requests must include the header:
 
-Examples:
-- `/v1/categories`
-- `/v1/subcategories`
-- `/v1/entries`
-- `/v1/balance`
-
-Use proper HTTP status codes.
-
-## Security Rule
-
-Every API request must require the header:
-- `api-key`
-
-Expected value:
-- `aXRhw7o=`
+```
+api-key: aXRhw7o=
+```
 
 Requests without the correct header must return:
-- `401 Unauthorized`
 
-Implement this with native Spring MVC filter infrastructure, preferably `OncePerRequestFilter`.
+```
+401 Unauthorized
+```
 
-## Persistence Rules
+Implement using **Spring `OncePerRequestFilter`**.
 
-Use PostgreSQL.
-Use Spring Data JPA.
-Use Kotlin JPA conventions compatible with the Kotlin Spring and JPA plugins already configured.
+---
 
-### Persistence Separation
-- JPA entities belong to infrastructure
-- domain models must not be JPA entities
-- use mappers to convert between persistence models and domain/application models
+# Persistence Rules
 
-### Migrations
-If database migrations are added later, prefer Flyway.
+Use:
 
-## Validation Rules
+* PostgreSQL
+* Spring Data JPA
 
-Use Jakarta Bean Validation and Spring validation support.
-Validation must happen at the correct boundary:
-- request validation in transport layer
-- business validation in domain/application layer
+### Persistence separation
 
-Do not put business rules only in annotations.
+* JPA entities belong to infrastructure
+* domain models must remain independent
+* mapping must be done via mappers
 
-## Error Handling Rules
+---
 
-Prefer a centralized exception handling strategy.
+# Database Migration Rules
 
-Use consistent error responses.
-When using Spring native features, prefer `ProblemDetail` and a global handler.
+All database changes must be versioned using **Flyway**.
 
-Do not return raw stack traces.
-Do not expose internal exception messages directly to API consumers unless intentional and safe.
+Expected location:
 
-## Logging Rules
+```
+src/main/resources/db/migration
+```
 
-Use structured, concise, useful logs.
+Migrations must include:
 
-Prefer parameterized logging.
+* tables
+* constraints
+* foreign keys
+* indexes
+* unique constraints
+
+Do not rely on Hibernate schema auto-generation.
+
+---
+
+# Validation Rules
+
+Use **Jakarta Bean Validation**.
+
+Validation responsibilities:
+
+| Layer           | Responsibility     |
+| --------------- | ------------------ |
+| Transport layer | request validation |
+| Domain layer    | business rules     |
+
+Do not encode business rules only via annotations.
+
+---
+
+# Logging Rules
+
+Use structured logging.
 
 Example:
-- `logger.info("Creating category with name={}", name)`
 
-Do not log secrets, passwords, API keys, or sensitive personal data.
+```java
+logger.info("Creating category with name={}", name)
+```
 
-## Testing Rules
+Never log:
 
-Generate tests with the existing project stack and Kotlin conventions.
+* API keys
+* passwords
+* sensitive data
 
-### Unit Tests
+---
+
+# Testing Rules
+
+Generate tests using the current project stack.
+
+### Unit tests
+
 Prefer:
-- JUnit 5
-- Kotlin test support
-- Mocking only when necessary
 
-### Test Style
-- method names in English
-- descriptive test names
-- one behavior per test
-- clear arrange / act / assert structure
+* JUnit 5
+* Kotlin test
+* MockK
 
-Do not generate fragile tests.
-Do not use integration test style when a unit test is enough.
-## End-to-End Testing (Cypress)
+### Test style
 
-The repository contains a top-level folder named `tests`, located at the same level as `src`.
+* English names
+* descriptive tests
+* Arrange / Act / Assert structure
+* one behavior per test
 
-Purpose:
+Avoid fragile tests.
 
-This folder contains the end-to-end (E2E) test suite implemented using Cypress.
+---
 
-These tests validate the full API behavior through HTTP requests and ensure the system works correctly from the outside.
+# End-to-End Testing (Cypress)
 
-The Cypress test suite must follow the same engineering standards used in the Kotlin project.
+The repository contains a folder named:
 
-### Folder Structure
+```
+tests/
+```
 
-The expected structure inside the `tests` directory:
+located at the same level as `src`.
+
+This folder contains **Cypress E2E tests** validating the API externally.
+
+### Expected structure
+
+```
 tests
-├─ cypress
-│ ├─ e2e
-│ ├─ fixtures
-│ ├─ support
-│ └─ utils
-├─ cypress.config.ts
-└─ package.json
-Copy
+ ├─ cypress
+ │   ├─ e2e
+ │   ├─ fixtures
+ │   ├─ support
+ │   └─ utils
+ ├─ cypress.config.ts
+ └─ package.json
+```
 
-### Cypress Coding Rules
+### Cypress conventions
 
-All Cypress tests must follow these conventions:
+* code written in English
+* kebab-case filenames
+* reusable commands
+* no duplicated logic
 
-- code must be written in English
-- file names must use kebab-case
-- test names must be descriptive
-- avoid duplicated logic
-- reusable logic should be extracted to helpers in `support` or `utils`
+Example test files:
 
-### Test Naming
+* `categories-create.cy.ts`
+* `categories-list.cy.ts`
+* `entries-create.cy.ts`
+* `balance-calculation.cy.ts`
 
-Examples:
-categories-create.cy.ts
-categories-list.cy.ts
-balance-calculation.cy.ts
-entries-create.cy.ts
-Copy
+### Test structure
 
-### Test Style
-
-Use clear and consistent structure in each test:
-
-Arrange  
-Act  
+```
+Arrange
+Act
 Assert
+```
 
-Example structure:
-describe('create category', () => {
-it('should create a category successfully', () => {
-Copy
-// arrange
+### API Testing strategy
 
-// act
+Cypress tests must validate:
 
-// assert
-})
-})
+* HTTP status codes
+* response structure
+* validation errors
+* authentication via `api-key`
+* edge cases
 
-### Cypress Coding Rules
+### Reusable commands
 
-All Cypress tests must follow these conventions:
+Define reusable commands in:
 
-- code must be written in English
-- file names must use kebab-case
-- test names must be descriptive
-- avoid duplicated logic
-- reusable logic should be extracted to helpers in `support` or `utils`
+```
+tests/cypress/support/commands.ts
+```
 
-### Test Naming
+Example helpers:
 
-Examples:
+* `createCategory`
+* `createSubcategory`
+* `createEntry`
 
-### Test Style
+### Test coverage strategy
 
-Use clear and consistent structure in each test:
+| Layer       | Tool        |
+| ----------- | ----------- |
+| Domain      | JUnit       |
+| Use cases   | JUnit       |
+| Controllers | Spring Test |
+| Full API    | Cypress     |
 
-Arrange  
-Act  
-Assert
+Cypress tests must **not replace unit tests**.
 
-### API Testing Strategy
+---
 
-Cypress tests should validate:
+# Docker Rules
 
-- HTTP status codes
-- response body structure
-- validation errors
-- authentication using the `api-key` header
-- edge cases and invalid inputs
+Docker configuration must align with:
 
-Example header requirement:
+* Gradle 9.3.1
+* Java 21
+* Spring Boot 4.0.3
 
-Example structure:
-// arrange
+Prefer official images.
 
-// act
+Avoid deprecated `openjdk`.
 
-// assert
+Use:
 
+* multi-stage builds
+* non-root runtime users
+* minimal runtime images
 
-### API Testing Strategy
+---
 
-Cypress tests should validate:
+# Documentation Rules
 
-- HTTP status codes
-- response body structure
-- validation errors
-- authentication using the `api-key` header
-- edge cases and invalid inputs
+Documentation must always match the real implementation.
 
-Example header requirement:
+README must include:
 
-### Reusable Commands
+* project description
+* technology stack
+* how to run the application
+* API authentication
+* Swagger/OpenAPI access
+* example requests and responses
 
-Custom Cypress commands should be defined in:
+---
 
-Examples:
-
-- `createCategory`
-- `createSubcategory`
-- `createEntry`
-
-Avoid repeating raw HTTP requests in multiple tests.
-
-### Test Data
-
-Test fixtures must be stored in:
-
-Use fixtures for reusable payloads and expected responses.
-
-### Scope of Cypress Tests
-
-Cypress tests must focus on:
-
-- API behavior
-- contract validation
-- end-to-end flows
-
-They must not replace unit tests written in Kotlin.
-
-### Coverage Strategy
-
-Testing responsibilities are divided as follows:
-
-| Layer | Tool |
-|------|------|
-Domain logic | JUnit |
-Application use cases | JUnit |
-Controllers | Spring test |
-Full API behavior | Cypress |
-
-### Hard Constraints
-
-Cypress tests must:
-
-- respect the API contract defined in `api.yml`
-- not modify application source code
-- not bypass authentication rules
-- not depend on implementation details of the backend
-
-### Output Quality
-
-Generated Cypress tests must be:
-
-- deterministic
-- independent
-- easy to read
-- easy to maintain
-## Docker Rules
-
-Docker artifacts must be aligned with:
-- Gradle 9.3.1
-- Java 21
-- Spring Boot 4.0.3
-
-Prefer official Docker images.
-Do not use deprecated `openjdk` images.
-
-For Spring Boot containers:
-- prefer multi-stage builds
-- prefer non-root runtime user
-- keep runtime image minimal
-- keep image reproducible and readable
-
-## Documentation Rules
-
-Generated documentation must:
-- be technically accurate
-- reflect the actual build and dependency versions
-- avoid inventing features not present in the project
-- prefer concise, maintainable examples
-
-When generating README, setup docs, or comments:
-- use English in code examples
-- use clear terminology
-- avoid outdated commands
-
-## Hard Constraints
+# Hard Constraints
 
 Never generate:
-- deprecated Spring APIs when current APIs exist
-- Java boilerplate instead of idiomatic Kotlin
-- Portuguese identifiers in source code
-- incompatible dependency versions
-- code that assumes libraries not present in `build.gradle.kts`
-- architecture that mixes controller, business logic, and persistence in the same class
 
-## Output Quality Standard
+* deprecated Spring APIs
+* Java-style boilerplate instead of Kotlin
+* Portuguese identifiers in source code
+* incompatible dependency versions
+* architecture mixing controller + business logic + persistence
 
-Every generated code suggestion must be:
-- version-compatible
-- idiomatic Kotlin
-- aligned with Spring Boot 4.0.3
-- consistent with Gradle 9.3.1
-- easy to test
-- easy to maintain
-- written in English
+---
+
+# Output Quality Standard
+
+All generated code must be:
+
+* version compatible
+* idiomatic Kotlin
+* aligned with Spring Boot 4.0.3
+* consistent with Gradle 9.3.1
+* easy to test
+* easy to maintain
+* written in English
+
+```
+
