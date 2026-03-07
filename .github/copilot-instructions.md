@@ -260,7 +260,180 @@ Prefer:
 
 Do not generate fragile tests.
 Do not use integration test style when a unit test is enough.
+## End-to-End Testing (Cypress)
 
+The repository contains a top-level folder named `tests`, located at the same level as `src`.
+
+Purpose:
+
+This folder contains the end-to-end (E2E) test suite implemented using Cypress.
+
+These tests validate the full API behavior through HTTP requests and ensure the system works correctly from the outside.
+
+The Cypress test suite must follow the same engineering standards used in the Kotlin project.
+
+### Folder Structure
+
+The expected structure inside the `tests` directory:
+tests
+├─ cypress
+│ ├─ e2e
+│ ├─ fixtures
+│ ├─ support
+│ └─ utils
+├─ cypress.config.ts
+└─ package.json
+Copy
+
+### Cypress Coding Rules
+
+All Cypress tests must follow these conventions:
+
+- code must be written in English
+- file names must use kebab-case
+- test names must be descriptive
+- avoid duplicated logic
+- reusable logic should be extracted to helpers in `support` or `utils`
+
+### Test Naming
+
+Examples:
+categories-create.cy.ts
+categories-list.cy.ts
+balance-calculation.cy.ts
+entries-create.cy.ts
+Copy
+
+### Test Style
+
+Use clear and consistent structure in each test:
+
+Arrange  
+Act  
+Assert
+
+Example structure:
+describe('create category', () => {
+it('should create a category successfully', () => {
+Copy
+// arrange
+
+// act
+
+// assert
+})
+})
+
+### Cypress Coding Rules
+
+All Cypress tests must follow these conventions:
+
+- code must be written in English
+- file names must use kebab-case
+- test names must be descriptive
+- avoid duplicated logic
+- reusable logic should be extracted to helpers in `support` or `utils`
+
+### Test Naming
+
+Examples:
+
+### Test Style
+
+Use clear and consistent structure in each test:
+
+Arrange  
+Act  
+Assert
+
+### API Testing Strategy
+
+Cypress tests should validate:
+
+- HTTP status codes
+- response body structure
+- validation errors
+- authentication using the `api-key` header
+- edge cases and invalid inputs
+
+Example header requirement:
+
+Example structure:
+// arrange
+
+// act
+
+// assert
+
+
+### API Testing Strategy
+
+Cypress tests should validate:
+
+- HTTP status codes
+- response body structure
+- validation errors
+- authentication using the `api-key` header
+- edge cases and invalid inputs
+
+Example header requirement:
+
+### Reusable Commands
+
+Custom Cypress commands should be defined in:
+
+Examples:
+
+- `createCategory`
+- `createSubcategory`
+- `createEntry`
+
+Avoid repeating raw HTTP requests in multiple tests.
+
+### Test Data
+
+Test fixtures must be stored in:
+
+Use fixtures for reusable payloads and expected responses.
+
+### Scope of Cypress Tests
+
+Cypress tests must focus on:
+
+- API behavior
+- contract validation
+- end-to-end flows
+
+They must not replace unit tests written in Kotlin.
+
+### Coverage Strategy
+
+Testing responsibilities are divided as follows:
+
+| Layer | Tool |
+|------|------|
+Domain logic | JUnit |
+Application use cases | JUnit |
+Controllers | Spring test |
+Full API behavior | Cypress |
+
+### Hard Constraints
+
+Cypress tests must:
+
+- respect the API contract defined in `api.yml`
+- not modify application source code
+- not bypass authentication rules
+- not depend on implementation details of the backend
+
+### Output Quality
+
+Generated Cypress tests must be:
+
+- deterministic
+- independent
+- easy to read
+- easy to maintain
 ## Docker Rules
 
 Docker artifacts must be aligned with:

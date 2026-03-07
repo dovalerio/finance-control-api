@@ -1,12 +1,19 @@
 @echo off
 
-setx DB_HOST localhost
-setx DB_PORT 5432
-setx DB_NAME finance_db
-setx DB_USER finance_user
-setx DB_PASSWORD finance_pass
+REM Define as variaveis para a sessao atual (set) e permanentemente (setx)
 
-setx APP_PORT 8080
+set DB_URL=jdbc:postgresql://localhost:5433/finance_db
+set DB_USERNAME=postgres
+set DB_PASSWORD=postgres
+set APP_PORT=8080
+set SPRING_PROFILES_ACTIVE=dev
 
-echo Environment variables configured.
+setx DB_URL "jdbc:postgresql://localhost:5433/finance_db"
+setx DB_USERNAME "postgres"
+setx DB_PASSWORD "postgres"
+setx APP_PORT "8080"
+setx SPRING_PROFILES_ACTIVE "dev"
+
+echo Variaveis configuradas para a sessao atual e permanentemente.
+echo Execute: gradlew bootRun
 pause
