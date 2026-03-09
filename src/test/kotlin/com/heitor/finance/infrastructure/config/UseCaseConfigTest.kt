@@ -111,7 +111,7 @@ class UseCaseConfigTest {
 
     @Test
     fun `deleteSubcategoryUseCase should return DeleteSubcategoryUseCaseImpl`() {
-        val useCase = config.deleteSubcategoryUseCase(subcategoryOutputPort)
+        val useCase = config.deleteSubcategoryUseCase(subcategoryOutputPort, entryOutputPort)
 
         assertNotNull(useCase)
         assert(useCase is DeleteSubcategoryUseCaseImpl)

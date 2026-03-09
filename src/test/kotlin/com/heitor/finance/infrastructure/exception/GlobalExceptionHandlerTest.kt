@@ -3,8 +3,10 @@ package com.heitor.finance.infrastructure.exception
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
 import com.heitor.finance.domain.exception.EntryNotFoundException
+import com.heitor.finance.domain.exception.InvalidEntryAmountException
 import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.exception.SubcategoryAlreadyExistsException
+import com.heitor.finance.domain.exception.SubcategoryHasEntriesException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -86,5 +88,20 @@ class GlobalExceptionHandlerTest {
         val result = handler.handleMissingParam(ex)
         assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         assertThat(result.body!!.mensagem).contains("data_inicio")
+    }
+
+    @Test
+    fun `should return 422 for InvalidEntryAmountException`() {
+        val result = handler.handleInvalidEntryAmount(InvalidEntryAmountException())
+        assertThat(result.statusCode).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY)
+        assertThat(result.body!!.codigo).isEqualTo("valor_invalido")
+    }
+
+    @Test
+    fun `should return 409 for SubcategoryHasEntriesException`() {
+        val result = handler.handleSubcategoryHasEntries(SubcategoryHasEntriesException(5L))
+        assertThat(result.statusCode).isEqualTo(HttpStatus.CONFLICT)
+        assertThat(result.body!!.codigo).isEqualTo("conflito")
+        assertThat(result.body!!.mensagem).contains("5")
     }
 }

@@ -30,7 +30,7 @@ describe('GET /balanco', () => {
     })
   })
 
-  it('filters balance by id_categoria', () => {
+  it('filters balance by id_categoria and returns categoria in response', () => {
     balanceApi
       .calculate({ data_inicio: '2026-03-01', data_fim: '2026-03-31', id_categoria })
       .then((response) => {
@@ -38,6 +38,17 @@ describe('GET /balanco', () => {
         expect(response.body).to.have.property('receita')
         expect(response.body).to.have.property('despesa')
         expect(response.body).to.have.property('saldo')
+        expect(response.body).to.have.property('categoria')
+        expect(response.body.categoria.id_categoria).to.eq(id_categoria)
+      })
+  })
+
+  it('returns 400 when data_fim is before data_inicio', () => {
+    balanceApi
+      .calculate({ data_inicio: '2026-03-31', data_fim: '2026-03-01' })
+      .then((response) => {
+        expect(response.status).to.eq(400)
+        expect(response.body.codigo).to.eq('periodo_invalido')
       })
   })
 

@@ -46,8 +46,9 @@ dependencies {
     // Jackson Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // OpenAPI / Swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+    // Swagger UI (WebJar — springdoc-openapi not yet compatible with Spring Boot 4)
+    implementation("org.webjars:swagger-ui:5.18.2")
+    runtimeOnly("org.webjars:webjars-locator-lite:1.0.0")
 
     // Database
     runtimeOnly("org.postgresql:postgresql")

@@ -1,5 +1,6 @@
 package com.heitor.finance.domain.model
 
+import com.heitor.finance.domain.exception.InvalidEntryAmountException
 import com.heitor.finance.domain.valueobject.Money
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -94,7 +95,7 @@ class EntryTest {
 
     @Test
     fun `should throw when amount is zero`() {
-        val ex = assertThrows<IllegalArgumentException> {
+        assertThrows<InvalidEntryAmountException> {
             Entry(
                 description = "Bus ticket",
                 amount = Money.of("0.00"),
@@ -103,12 +104,11 @@ class EntryTest {
                 categoryId = 1L
             )
         }
-        assertEquals("Entry amount must not be zero", ex.message)
     }
 
     @Test
     fun `should throw when amount is zero using BigDecimal zero`() {
-        assertThrows<IllegalArgumentException> {
+        assertThrows<InvalidEntryAmountException> {
             Entry(
                 description = "Bus ticket",
                 amount = Money.ZERO,

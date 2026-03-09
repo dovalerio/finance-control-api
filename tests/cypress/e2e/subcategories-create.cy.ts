@@ -35,6 +35,19 @@ describe('POST /subcategorias', () => {
     })
   })
 
+  it('returns 409 when nome already exists in same category', () => {
+    const nome = uniqueName()
+    categoriesApi.create({ nome: uniqueCatName() }).then((catResponse) => {
+      const catId = catResponse.body.id_categoria
+      subcategoriesApi.create({ nome, id_categoria: catId }).then(() => {
+        subcategoriesApi.create({ nome, id_categoria: catId }).then((response) => {
+          expect(response.status).to.eq(409)
+          expect(response.body.codigo).to.eq('conflito')
+        })
+      })
+    })
+  })
+
   it('returns 401 when api-key header is absent', () => {
     cy.request({
       method: 'POST',

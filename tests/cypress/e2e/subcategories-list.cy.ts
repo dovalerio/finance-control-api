@@ -1,4 +1,4 @@
-import { categoriesApi, subcategoriesApi } from '../utils/api-client'
+import { categoriesApi, entriesApi, subcategoriesApi } from '../utils/api-client'
 
 const uniqueName = () => `Sub-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
 const uniqueCatName = () => `Cat-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
@@ -104,6 +104,25 @@ describe('DELETE /subcategorias/:id_subcategoria', () => {
         .then((subResponse) => {
           subcategoriesApi.remove(subResponse.body.id_subcategoria).then((response) => {
             expect(response.status).to.eq(204)
+          })
+        })
+    })
+  })
+})
+
+describe('DELETE /subcategorias/:id_subcategoria with entries', () => {
+  it('returns 409 when subcategory has linked entries', () => {
+    categoriesApi.create({ nome: uniqueCatName() }).then((catResponse) => {
+      const id_categoria = catResponse.body.id_categoria
+      subcategoriesApi
+        .create({ nome: uniqueName(), id_categoria })
+        .then((subResponse) => {
+          const id_subcategoria = subResponse.body.id_subcategoria
+          entriesApi.create({ valor: 100, id_subcategoria }).then(() => {
+            subcategoriesApi.remove(id_subcategoria).then((response) => {
+              expect(response.status).to.eq(409)
+              expect(response.body.codigo).to.eq('conflito')
+            })
           })
         })
     })

@@ -53,6 +53,13 @@ describe('POST /lancamentos', () => {
     })
   })
 
+  it('returns 422 when valor is zero', () => {
+    entriesApi.create({ valor: 0, id_subcategoria }).then((response) => {
+      expect(response.status).to.eq(422)
+      expect(response.body.codigo).to.eq('valor_invalido')
+    })
+  })
+
   it('returns 401 when api-key header is absent', () => {
     cy.request({
       method: 'POST',
