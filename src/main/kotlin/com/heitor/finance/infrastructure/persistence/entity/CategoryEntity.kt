@@ -3,14 +3,15 @@ package com.heitor.finance.infrastructure.persistence.entity
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "categories")
+@Table(name = "categoria")
 class CategoryEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_categoria")
     val id: Long? = null,
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "nome", nullable = false, unique = true)
     val name: String,
 
     @OneToMany(mappedBy = "category", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)

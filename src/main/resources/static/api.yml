@@ -1,0 +1,409 @@
+openapi: 3.0.3
+
+info:
+  title: Finance Control API
+  version: 1.0.0
+  description: API para controle financeiro
+
+servers:
+  - url: http://localhost:8080/v1
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+
+  /categorias:
+    get:
+      summary: Listar categorias
+      parameters:
+        - name: nome
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de categorias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Categoria'
+
+    post:
+      summary: Criar categoria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarCategoriaRequest'
+      responses:
+        '201':
+          description: Categoria criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+
+  /categorias/{id_categoria}:
+    get:
+      summary: Buscar categoria por id
+      parameters:
+        - name: id_categoria
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Categoria encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+
+    put:
+      summary: Atualizar categoria
+      parameters:
+        - name: id_categoria
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarCategoriaRequest'
+      responses:
+        '200':
+          description: Categoria atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categoria'
+
+    delete:
+      summary: Excluir categoria
+      parameters:
+        - name: id_categoria
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Categoria excluída
+
+  /subcategorias:
+    get:
+      summary: Listar subcategorias
+      parameters:
+        - name: nome
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de subcategorias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subcategoria'
+
+    post:
+      summary: Criar subcategoria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarSubcategoriaRequest'
+      responses:
+        '201':
+          description: Subcategoria criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subcategoria'
+
+  /subcategorias/{id_subcategoria}:
+    get:
+      summary: Buscar subcategoria por id
+      parameters:
+        - name: id_subcategoria
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Subcategoria encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subcategoria'
+
+    put:
+      summary: Atualizar subcategoria
+      parameters:
+        - name: id_subcategoria
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarSubcategoriaRequest'
+      responses:
+        '200':
+          description: Subcategoria atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subcategoria'
+
+    delete:
+      summary: Excluir subcategoria
+      parameters:
+        - name: id_subcategoria
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Subcategoria excluída
+
+  /lancamentos:
+    get:
+      summary: Listar lançamentos
+      parameters:
+        - name: id_subcategoria
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: data_inicio
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Lista de lançamentos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lancamento'
+
+    post:
+      summary: Criar lançamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarLancamentoRequest'
+      responses:
+        '201':
+          description: Lançamento criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lancamento'
+
+  /lancamentos/{id_lancamento}:
+    get:
+      summary: Buscar lançamento
+      parameters:
+        - name: id_lancamento
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lançamento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lancamento'
+
+    put:
+      summary: Atualizar lançamento
+      parameters:
+        - name: id_lancamento
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarLancamentoRequest'
+      responses:
+        '200':
+          description: Lançamento atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lancamento'
+
+    delete:
+      summary: Excluir lançamento
+      parameters:
+        - name: id_lancamento
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Lançamento excluído
+
+  /balanco:
+    get:
+      summary: Calcular balanço
+      parameters:
+        - name: data_inicio
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: id_categoria
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Resultado do balanço
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balanco'
+
+components:
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api-key
+
+  schemas:
+
+    Categoria:
+      type: object
+      properties:
+        id_categoria:
+          type: integer
+        nome:
+          type: string
+
+    CriarCategoriaRequest:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+
+    Subcategoria:
+      type: object
+      properties:
+        id_subcategoria:
+          type: integer
+        nome:
+          type: string
+        id_categoria:
+          type: integer
+
+    CriarSubcategoriaRequest:
+      type: object
+      required:
+        - nome
+        - id_categoria
+      properties:
+        nome:
+          type: string
+        id_categoria:
+          type: integer
+
+    Lancamento:
+      type: object
+      properties:
+        id_lancamento:
+          type: integer
+        valor:
+          type: number
+        data:
+          type: string
+          format: date
+        id_subcategoria:
+          type: integer
+        comentario:
+          type: string
+
+    CriarLancamentoRequest:
+      type: object
+      required:
+        - valor
+        - id_subcategoria
+      properties:
+        valor:
+          type: number
+        data:
+          type: string
+          format: date
+        id_subcategoria:
+          type: integer
+        comentario:
+          type: string
+
+    Balanco:
+      type: object
+      properties:
+        receita:
+          type: number
+        despesa:
+          type: number
+        saldo:
+          type: number
+
+    Erro:
+      type: object
+      properties:
+        codigo:
+          type: string
+        mensagem:
+          type: string

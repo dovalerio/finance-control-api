@@ -1,5 +1,6 @@
 package com.heitor.finance.domain.model
 
+import com.heitor.finance.domain.exception.InvalidEntryAmountException
 import com.heitor.finance.domain.valueobject.Money
 import java.time.LocalDate
 
@@ -13,6 +14,6 @@ data class Entry(
     val subcategoryId: Long? = null
 ) {
     init {
-        require(!amount.isZero) { "Entry amount must not be zero" }
+        if (amount.isZero) throw InvalidEntryAmountException()
     }
 }

@@ -63,4 +63,7 @@ class EntryRepositoryAdapter(
     }
 
     override fun deleteById(id: Long) = entryJpaRepository.deleteById(id)
+
+    override fun existsBySubcategoryId(subcategoryId: Long): Boolean =
+        entryJpaRepository.existsBySubcategoryId(subcategoryId)
 }

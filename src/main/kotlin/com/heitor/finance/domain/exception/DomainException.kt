@@ -14,3 +14,9 @@ class CategoryAlreadyExistsException(name: String) : DomainException("Category a
 
 class SubcategoryAlreadyExistsException(name: String, categoryId: Long) :
     DomainException("Subcategory already exists with name='$name' in category id=$categoryId")
+
+class InvalidEntryAmountException :
+    DomainException("Entry amount must not be zero")
+
+class SubcategoryHasEntriesException(id: Long) :
+    DomainException("Subcategory id=$id has entries and cannot be deleted")

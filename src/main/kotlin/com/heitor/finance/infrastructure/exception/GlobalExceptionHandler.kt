@@ -4,8 +4,10 @@ import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
 import com.heitor.finance.domain.exception.DomainException
 import com.heitor.finance.domain.exception.EntryNotFoundException
+import com.heitor.finance.domain.exception.InvalidEntryAmountException
 import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.exception.SubcategoryAlreadyExistsException
+import com.heitor.finance.domain.exception.SubcategoryHasEntriesException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
 import org.apache.logging.log4j.LogManager
 import org.springframework.http.HttpStatus
@@ -22,6 +24,22 @@ data class ErrorResponse(val codigo: String, val mensagem: String)
 class GlobalExceptionHandler {
 
     private val logger = LogManager.getLogger(GlobalExceptionHandler::class.java)
+
+    @ExceptionHandler(InvalidEntryAmountException::class)
+    fun handleInvalidEntryAmount(ex: InvalidEntryAmountException): ResponseEntity<ErrorResponse> {
+        logger.warn("Invalid entry amount: {}", ex.message)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+            ErrorResponse(codigo = "valor_invalido", mensagem = ex.message ?: "O valor do lançamento não pode ser zero")
+        )
+    }
+
+    @ExceptionHandler(SubcategoryHasEntriesException::class)
+    fun handleSubcategoryHasEntries(ex: SubcategoryHasEntriesException): ResponseEntity<ErrorResponse> {
+        logger.warn("Subcategory delete blocked: {}", ex.message)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            ErrorResponse(codigo = "conflito", mensagem = ex.message ?: "Subcategoria possui lançamentos e não pode ser excluída")
+        )
+    }
 
     @ExceptionHandler(SubcategoryAlreadyExistsException::class)
     fun handleSubcategoryAlreadyExists(ex: SubcategoryAlreadyExistsException): ResponseEntity<ErrorResponse> {

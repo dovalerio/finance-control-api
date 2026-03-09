@@ -67,8 +67,10 @@ class UseCaseConfig {
     ) = UpdateSubcategoryUseCaseImpl(subcategoryOutputPort, categoryOutputPort)
 
     @Bean
-    fun deleteSubcategoryUseCase(subcategoryOutputPort: SubcategoryOutputPort) =
-        DeleteSubcategoryUseCaseImpl(subcategoryOutputPort)
+    fun deleteSubcategoryUseCase(
+        subcategoryOutputPort: SubcategoryOutputPort,
+        entryOutputPort: EntryOutputPort
+    ) = DeleteSubcategoryUseCaseImpl(subcategoryOutputPort, entryOutputPort)
 
     @Bean
     fun createEntryUseCase(

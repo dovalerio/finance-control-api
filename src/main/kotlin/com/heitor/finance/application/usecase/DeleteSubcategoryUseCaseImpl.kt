@@ -1,12 +1,15 @@
 package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.port.input.DeleteSubcategoryUseCase
+import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
+import com.heitor.finance.domain.exception.SubcategoryHasEntriesException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
 import org.apache.logging.log4j.LogManager
 
 class DeleteSubcategoryUseCaseImpl(
-    private val subcategoryOutputPort: SubcategoryOutputPort
+    private val subcategoryOutputPort: SubcategoryOutputPort,
+    private val entryOutputPort: EntryOutputPort
 ) : DeleteSubcategoryUseCase {
 
     private val logger = LogManager.getLogger(DeleteSubcategoryUseCaseImpl::class.java)
@@ -14,6 +17,10 @@ class DeleteSubcategoryUseCaseImpl(
     override fun execute(id: Long) {
         logger.debug("Deleting subcategory id={}", id)
         if (subcategoryOutputPort.findById(id) == null) throw SubcategoryNotFoundException(id)
+        if (entryOutputPort.existsBySubcategoryId(id)) {
+            logger.warn("Cannot delete subcategory id={} — has associated entries", id)
+            throw SubcategoryHasEntriesException(id)
+        }
         subcategoryOutputPort.deleteById(id)
         logger.info("Subcategory deleted id={}", id)
     }

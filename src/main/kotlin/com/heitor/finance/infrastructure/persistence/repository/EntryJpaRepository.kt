@@ -34,6 +34,8 @@ interface EntryJpaRepository : JpaRepository<EntryEntity, Long> {
 
     fun findBySubcategoryId(subcategoryId: Long): List<EntryEntity>
 
+    fun existsBySubcategoryId(subcategoryId: Long): Boolean
+
     @Query(
         """
         SELECT e FROM EntryEntity e

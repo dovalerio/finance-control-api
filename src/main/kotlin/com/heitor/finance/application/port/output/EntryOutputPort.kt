@@ -12,4 +12,5 @@ interface EntryOutputPort {
     fun findByPeriodAndCategoryId(period: Period, categoryId: Long): List<Entry>
     fun save(entry: Entry): Entry
     fun deleteById(id: Long)
+    fun existsBySubcategoryId(subcategoryId: Long): Boolean
 }
