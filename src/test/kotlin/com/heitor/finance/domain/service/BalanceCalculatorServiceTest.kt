@@ -26,7 +26,7 @@ class BalanceCalculatorServiceTest {
 
         assertEquals(Money.of("150.00"), balance.income)
         assertEquals(Money.of("50.00"), balance.expense)
-        assertEquals(Money.of("100.00"), balance.net)
+        assertEquals(0, balance.net.compareTo(BigDecimal("100.00")))
     }
 
     @Test
@@ -35,11 +35,11 @@ class BalanceCalculatorServiceTest {
 
         assertEquals(Money.ZERO, balance.income)
         assertEquals(Money.ZERO, balance.expense)
-        assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
+        assertEquals(0, balance.net.compareTo(BigDecimal.ZERO))
     }
 
     @Test
-    fun `should clamp net to zero when expenses exceed income`() {
+    fun `should return negative net when expenses exceed income`() {
         val entries = listOf(
             Entry(description = "Bus", amount = Money.of("300.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
             Entry(description = "Refund", amount = Money.of("100.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
@@ -47,7 +47,7 @@ class BalanceCalculatorServiceTest {
 
         val balance = service.calculate(category, entries)
 
-        assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
+        assertEquals(0, balance.net.compareTo(BigDecimal("-200.00")))
     }
 
     @Test
@@ -62,7 +62,7 @@ class BalanceCalculatorServiceTest {
 
         assertEquals(Money.of("3700.00"), balance.income)
         assertEquals(Money.ZERO, balance.expense)
-        assertEquals(Money.of("3700.00"), balance.net)
+        assertEquals(0, balance.net.compareTo(BigDecimal("3700.00")))
     }
 
     @Test
@@ -77,7 +77,7 @@ class BalanceCalculatorServiceTest {
 
         assertEquals(Money.ZERO, balance.income)
         assertEquals(Money.of("1630.00"), balance.expense)
-        assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
+        assertEquals(0, balance.net.compareTo(BigDecimal("-1630.00")))
     }
 
     @Test

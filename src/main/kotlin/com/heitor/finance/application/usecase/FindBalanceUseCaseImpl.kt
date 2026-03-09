@@ -40,7 +40,7 @@ class FindBalanceUseCaseImpl(
                 category = null,
                 revenue = revenue.amount,
                 expense = expense.amount,
-                balance = (revenue - expense).amount
+                balance = revenue.amount.subtract(expense.amount)
             )
         }
 
@@ -53,7 +53,7 @@ class FindBalanceUseCaseImpl(
             category = CategoryResponse(id = category.id!!, name = category.name),
             revenue = balance.income.amount,
             expense = balance.expense.amount,
-            balance = balance.net.amount
+            balance = balance.net
         )
     }
 }

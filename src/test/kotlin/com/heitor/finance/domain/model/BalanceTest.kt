@@ -16,17 +16,17 @@ class BalanceTest {
             income = Money.of("200.00"),
             expense = Money.of("80.00")
         )
-        assertEquals(Money.of("120.00"), balance.net)
+        assertEquals(0, balance.net.compareTo(BigDecimal("120.00")))
     }
 
     @Test
-    fun `should clamp net to zero when expense exceeds income`() {
+    fun `should return negative net when expense exceeds income`() {
         val balance = Balance(
             category = category,
             income = Money.of("50.00"),
             expense = Money.of("200.00")
         )
-        assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
+        assertEquals(0, balance.net.compareTo(BigDecimal("-150.00")))
     }
 
     @Test
@@ -47,7 +47,7 @@ class BalanceTest {
             income = Money.ZERO,
             expense = Money.ZERO
         )
-        assertEquals(0, balance.net.amount.compareTo(BigDecimal.ZERO))
+        assertEquals(0, balance.net.compareTo(BigDecimal.ZERO))
     }
 
     @Test
@@ -63,13 +63,13 @@ class BalanceTest {
 
     @Test
     fun `should accept explicitly overridden net`() {
-        val customNet = Money.of("999.00")
+        val customNet = BigDecimal("999.00")
         val balance = Balance(
             category = category,
             income = Money.of("100.00"),
             expense = Money.of("40.00"),
             net = customNet
         )
-        assertEquals(customNet, balance.net)
+        assertEquals(0, balance.net.compareTo(customNet))
     }
 }
