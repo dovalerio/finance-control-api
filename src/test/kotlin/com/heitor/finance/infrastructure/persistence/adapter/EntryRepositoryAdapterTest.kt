@@ -36,7 +36,7 @@ class EntryRepositoryAdapterTest {
     private val date = LocalDate.of(2024, 1, 15)
     private val entryEntity = EntryEntity(
         id = 100L,
-        description = "Groceries",
+        comment ="Groceries",
         amount = BigDecimal("49.90"),
         type = EntryType.EXPENSE,
         date = date,
@@ -52,7 +52,7 @@ class EntryRepositoryAdapterTest {
 
         assertEquals(1, result.size)
         assertEquals(100L, result[0].id)
-        assertEquals("Groceries", result[0].description)
+        assertEquals("Groceries", result[0].comment)
     }
 
     @Test
@@ -71,7 +71,7 @@ class EntryRepositoryAdapterTest {
         val result = adapter.findById(100L)
 
         assertEquals(100L, result?.id)
-        assertEquals("Groceries", result?.description)
+        assertEquals("Groceries", result?.comment)
     }
 
     @Test
@@ -168,7 +168,7 @@ class EntryRepositoryAdapterTest {
     fun `save should persist entry with subcategory and return domain model`() {
         val entry = Entry(
             id = null,
-            description = "Groceries",
+            comment ="Groceries",
             amount = Money.of(BigDecimal("49.90")),
             type = EntryType.EXPENSE,
             date = date,
@@ -176,7 +176,7 @@ class EntryRepositoryAdapterTest {
             subcategoryId = 10L
         )
         val savedEntry = EntryEntity(
-            id = 100L, description = "Groceries", amount = BigDecimal("49.90"),
+            id = 100L, comment ="Groceries", amount = BigDecimal("49.90"),
             type = EntryType.EXPENSE, date = date, category = categoryEntity, subcategory = subcategoryEntity
         )
         every { categoryJpaRepository.findById(1L) } returns Optional.of(categoryEntity)
@@ -185,7 +185,7 @@ class EntryRepositoryAdapterTest {
 
         val result = adapter.save(entry)
 
-        assertEquals("Groceries", result.description)
+        assertEquals("Groceries", result.comment)
         assertEquals(EntryType.EXPENSE, result.type)
         verify { entryJpaRepository.save(any()) }
     }
@@ -194,7 +194,7 @@ class EntryRepositoryAdapterTest {
     fun `save should persist entry without subcategory`() {
         val entry = Entry(
             id = null,
-            description = "Salary",
+            comment ="Salary",
             amount = Money.of(BigDecimal("5000.00")),
             type = EntryType.INCOME,
             date = date,
@@ -202,7 +202,7 @@ class EntryRepositoryAdapterTest {
             subcategoryId = null
         )
         val savedEntity = EntryEntity(
-            id = 101L, description = "Salary", amount = BigDecimal("5000.00"),
+            id = 101L, comment ="Salary", amount = BigDecimal("5000.00"),
             type = EntryType.INCOME, date = date, category = categoryEntity
         )
         every { categoryJpaRepository.findById(1L) } returns Optional.of(categoryEntity)
@@ -211,14 +211,14 @@ class EntryRepositoryAdapterTest {
         val result = adapter.save(entry)
 
         assertEquals(101L, result.id)
-        assertEquals("Salary", result.description)
+        assertEquals("Salary", result.comment)
         assertNull(result.subcategoryId)
     }
 
     @Test
     fun `save should throw CategoryNotFoundException when category not found`() {
         val entry = Entry(
-            id = null, description = "Test", amount = Money.of(BigDecimal("10.00")),
+            id = null, comment ="Test", amount = Money.of(BigDecimal("10.00")),
             type = EntryType.EXPENSE, date = date, categoryId = 99L, subcategoryId = null
         )
         every { categoryJpaRepository.findById(99L) } returns Optional.empty()
@@ -231,7 +231,7 @@ class EntryRepositoryAdapterTest {
     @Test
     fun `save should throw SubcategoryNotFoundException when subcategory not found`() {
         val entry = Entry(
-            id = null, description = "Test", amount = Money.of(BigDecimal("10.00")),
+            id = null, comment ="Test", amount = Money.of(BigDecimal("10.00")),
             type = EntryType.EXPENSE, date = date, categoryId = 1L, subcategoryId = 99L
         )
         every { categoryJpaRepository.findById(1L) } returns Optional.of(categoryEntity)

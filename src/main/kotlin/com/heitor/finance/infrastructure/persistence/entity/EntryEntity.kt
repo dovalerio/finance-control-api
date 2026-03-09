@@ -15,7 +15,7 @@ class EntryEntity(
     val id: Long? = null,
 
     @Column(name = "comentario", nullable = false)
-    val description: String,
+    val comment: String,
 
     @Column(name = "valor", nullable = false, precision = 19, scale = 2)
     val amount: BigDecimal,

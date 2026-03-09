@@ -427,10 +427,10 @@ tasks.check { dependsOn(tasks.jacocoTestCoverageVerification) }
 | P3-001 | Médio | Sem testes de integração com Testcontainers | ❌ Pendente |
 | P3-002 | Médio | Cypress sem casos de erro de negócio | ⚠️ Parcial (5 de 9 resolvidos) |
 | P3-003 | Médio | Cypress não verifica `codigo` no corpo de erro | ⚠️ Parcial (novos testes OK, existentes não) |
-| P4-001 | Baixo | `Entry.description` semanticamente incorreto | ❌ Pendente |
-| P4-002 | Baixo | `MethodArgumentTypeMismatchException` retorna 500 | ❌ Pendente |
-| P4-003 | Baixo | Métricas expostas sem autenticação | ❌ Pendente |
-| P4-004 | Baixo | JaCoCo sem threshold mínimo configurado | ❌ Pendente |
+| P4-001 | Baixo | `Entry.description` semanticamente incorreto | ✅ Resolvido |
+| P4-002 | Baixo | `MethodArgumentTypeMismatchException` retorna 500 | ✅ Resolvido |
+| P4-003 | Baixo | Métricas expostas sem autenticação | ✅ Resolvido |
+| P4-004 | Baixo | JaCoCo sem threshold mínimo configurado | ✅ Resolvido |
 
 ---
 

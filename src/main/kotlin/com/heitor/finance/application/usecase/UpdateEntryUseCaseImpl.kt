@@ -37,7 +37,7 @@ class UpdateEntryUseCaseImpl(
                 date = request.date ?: existing.date,
                 categoryId = subcategory.categoryId,
                 subcategoryId = subcategory.id,
-                description = request.comment ?: ""
+                comment = request.comment ?: ""
             )
         )
 
@@ -48,7 +48,7 @@ class UpdateEntryUseCaseImpl(
             value = savedValue,
             date = updated.date,
             subcategoryId = updated.subcategoryId,
-            comment = updated.description.ifBlank { null }
+            comment = updated.comment.ifBlank { null }
         )
     }
 }

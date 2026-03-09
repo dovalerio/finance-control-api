@@ -33,7 +33,7 @@ class FindEntryUseCaseImpl(
             value = value,
             date = date,
             subcategoryId = subcategoryId,
-            comment = description.ifBlank { null }
+            comment = comment.ifBlank { null }
         )
     }
 }

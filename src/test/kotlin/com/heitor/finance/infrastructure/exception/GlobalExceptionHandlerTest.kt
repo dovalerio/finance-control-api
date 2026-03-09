@@ -8,12 +8,15 @@ import com.heitor.finance.domain.exception.InvalidPeriodException
 import com.heitor.finance.domain.exception.SubcategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.SubcategoryHasEntriesException
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.mock.http.MockHttpInputMessage
 import org.springframework.web.bind.MissingServletRequestParameterException
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 class GlobalExceptionHandlerTest {
 
@@ -103,5 +106,15 @@ class GlobalExceptionHandlerTest {
         assertThat(result.statusCode).isEqualTo(HttpStatus.CONFLICT)
         assertThat(result.body!!.codigo).isEqualTo("conflito")
         assertThat(result.body!!.mensagem).contains("5")
+    }
+
+    @Test
+    fun `should return 400 for MethodArgumentTypeMismatchException`() {
+        val ex = mockk<MethodArgumentTypeMismatchException>()
+        every { ex.name } returns "id"
+        val result = handler.handleTypeMismatch(ex)
+        assertThat(result.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+        assertThat(result.body!!.codigo).isEqualTo("parametro_invalido")
+        assertThat(result.body!!.mensagem).contains("id")
     }
 }

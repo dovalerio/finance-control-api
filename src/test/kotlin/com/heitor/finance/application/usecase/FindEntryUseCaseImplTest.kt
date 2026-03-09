@@ -21,11 +21,11 @@ class FindEntryUseCaseImplTest {
 
     private val date = LocalDate.of(2024, 3, 10)
     private val incomeEntry = Entry(
-        id = 1L, description = "Salary", amount = Money.of(BigDecimal("3000.00")),
+        id = 1L, comment ="Salary", amount = Money.of(BigDecimal("3000.00")),
         type = EntryType.INCOME, date = date, categoryId = 1L, subcategoryId = 5L
     )
     private val expenseEntry = Entry(
-        id = 2L, description = "", amount = Money.of(BigDecimal("50.00")),
+        id = 2L, comment ="", amount = Money.of(BigDecimal("50.00")),
         type = EntryType.EXPENSE, date = date, categoryId = 1L, subcategoryId = 5L
     )
 

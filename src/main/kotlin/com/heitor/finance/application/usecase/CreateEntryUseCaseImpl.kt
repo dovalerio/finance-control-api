@@ -32,7 +32,7 @@ class CreateEntryUseCaseImpl(
         val amount = Money.of(request.value.abs())
 
         val entry = Entry(
-            description = request.comment ?: "",
+            comment = request.comment ?: "",
             amount = amount,
             type = type,
             date = request.date ?: java.time.LocalDate.now(),
@@ -49,7 +49,7 @@ class CreateEntryUseCaseImpl(
             value = savedValue,
             date = saved.date,
             subcategoryId = saved.subcategoryId,
-            comment = saved.description.ifBlank { null }
+            comment = saved.comment.ifBlank { null }
         )
     }
 }

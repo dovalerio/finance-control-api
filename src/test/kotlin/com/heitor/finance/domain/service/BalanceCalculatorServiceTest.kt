@@ -18,8 +18,8 @@ class BalanceCalculatorServiceTest {
     @Test
     fun `should calculate balance correctly for income and expense entries`() {
         val entries = listOf(
-            Entry(description = "Bus", amount = Money.of("50.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
-            Entry(description = "Refund", amount = Money.of("150.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
+            Entry(comment ="Bus", amount = Money.of("50.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
+            Entry(comment ="Refund", amount = Money.of("150.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
         )
 
         val balance = service.calculate(category, entries)
@@ -41,8 +41,8 @@ class BalanceCalculatorServiceTest {
     @Test
     fun `should return negative net when expenses exceed income`() {
         val entries = listOf(
-            Entry(description = "Bus", amount = Money.of("300.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
-            Entry(description = "Refund", amount = Money.of("100.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
+            Entry(comment ="Bus", amount = Money.of("300.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
+            Entry(comment ="Refund", amount = Money.of("100.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
         )
 
         val balance = service.calculate(category, entries)
@@ -53,9 +53,9 @@ class BalanceCalculatorServiceTest {
     @Test
     fun `should aggregate multiple income entries`() {
         val entries = listOf(
-            Entry(description = "Salary", amount = Money.of("3000.00"), type = EntryType.INCOME, date = date, categoryId = 1L),
-            Entry(description = "Bonus", amount = Money.of("500.00"), type = EntryType.INCOME, date = date, categoryId = 1L),
-            Entry(description = "Freelance", amount = Money.of("200.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
+            Entry(comment ="Salary", amount = Money.of("3000.00"), type = EntryType.INCOME, date = date, categoryId = 1L),
+            Entry(comment ="Bonus", amount = Money.of("500.00"), type = EntryType.INCOME, date = date, categoryId = 1L),
+            Entry(comment ="Freelance", amount = Money.of("200.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
         )
 
         val balance = service.calculate(category, entries)
@@ -68,9 +68,9 @@ class BalanceCalculatorServiceTest {
     @Test
     fun `should aggregate multiple expense entries`() {
         val entries = listOf(
-            Entry(description = "Rent", amount = Money.of("1200.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
-            Entry(description = "Groceries", amount = Money.of("350.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
-            Entry(description = "Utilities", amount = Money.of("80.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L)
+            Entry(comment ="Rent", amount = Money.of("1200.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
+            Entry(comment ="Groceries", amount = Money.of("350.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L),
+            Entry(comment ="Utilities", amount = Money.of("80.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L)
         )
 
         val balance = service.calculate(category, entries)
@@ -83,7 +83,7 @@ class BalanceCalculatorServiceTest {
     @Test
     fun `should only income entries result in zero expense`() {
         val entries = listOf(
-            Entry(description = "Salary", amount = Money.of("5000.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
+            Entry(comment ="Salary", amount = Money.of("5000.00"), type = EntryType.INCOME, date = date, categoryId = 1L)
         )
 
         val balance = service.calculate(category, entries)
@@ -95,7 +95,7 @@ class BalanceCalculatorServiceTest {
     @Test
     fun `should only expense entries result in zero income`() {
         val entries = listOf(
-            Entry(description = "Rent", amount = Money.of("1500.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L)
+            Entry(comment ="Rent", amount = Money.of("1500.00"), type = EntryType.EXPENSE, date = date, categoryId = 1L)
         )
 
         val balance = service.calculate(category, entries)

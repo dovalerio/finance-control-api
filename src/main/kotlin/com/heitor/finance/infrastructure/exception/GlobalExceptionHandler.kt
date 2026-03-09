@@ -17,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 data class ErrorResponse(val codigo: String, val mensagem: String)
 
@@ -115,6 +116,14 @@ class GlobalExceptionHandler {
                 codigo = "parametro_ausente",
                 mensagem = "Required parameter '${ex.parameterName}' is missing"
             )
+        )
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponse> {
+        logger.warn("Type mismatch for parameter: {}", ex.name)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            ErrorResponse(codigo = "parametro_invalido", mensagem = "Parâmetro '${ex.name}' com formato inválido")
         )
     }
 

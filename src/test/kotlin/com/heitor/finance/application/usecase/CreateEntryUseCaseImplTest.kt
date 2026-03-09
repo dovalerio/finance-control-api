@@ -33,7 +33,7 @@ class CreateEntryUseCaseImplTest {
         val entrySlot = slot<Entry>()
         val savedEntry = Entry(
             id = 1L,
-            description = "Salary",
+            comment ="Salary",
             amount = Money.of(BigDecimal("150.00")),
             type = EntryType.INCOME,
             date = today,
@@ -61,7 +61,7 @@ class CreateEntryUseCaseImplTest {
         val request = CreateEntryRequest(value = BigDecimal("-80.00"), subcategoryId = 5L, date = today)
         val savedEntry = Entry(
             id = 2L,
-            description = "",
+            comment ="",
             amount = Money.of(BigDecimal("80.00")),
             type = EntryType.EXPENSE,
             date = today,

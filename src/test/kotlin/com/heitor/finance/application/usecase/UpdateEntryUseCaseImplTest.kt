@@ -27,14 +27,14 @@ class UpdateEntryUseCaseImplTest {
     private val date = LocalDate.of(2024, 3, 10)
     private val subcategory = Subcategory(id = 5L, name = "Fuel", categoryId = 2L)
     private val existingEntry = Entry(
-        id = 1L, description = "Old desc", amount = Money.of(BigDecimal("100.00")),
+        id = 1L, comment ="Old desc", amount = Money.of(BigDecimal("100.00")),
         type = EntryType.INCOME, date = date, categoryId = 2L, subcategoryId = 5L
     )
 
     @Test
     fun `should update entry as INCOME when value is positive`() {
         val request = CreateEntryRequest(value = BigDecimal("200.00"), subcategoryId = 5L, date = date, comment = "Updated")
-        val updated = existingEntry.copy(amount = Money.of(BigDecimal("200.00")), description = "Updated")
+        val updated = existingEntry.copy(amount = Money.of(BigDecimal("200.00")), comment ="Updated")
 
         every { entryOutputPort.findById(1L) } returns existingEntry
         every { subcategoryOutputPort.findById(5L) } returns subcategory
@@ -51,7 +51,7 @@ class UpdateEntryUseCaseImplTest {
     fun `should update entry as EXPENSE and return negative value when value is negative`() {
         val request = CreateEntryRequest(value = BigDecimal("-75.00"), subcategoryId = 5L, date = date)
         val updated = existingEntry.copy(
-            amount = Money.of(BigDecimal("75.00")), type = EntryType.EXPENSE, description = ""
+            amount = Money.of(BigDecimal("75.00")), type = EntryType.EXPENSE, comment =""
         )
 
         every { entryOutputPort.findById(1L) } returns existingEntry

@@ -35,8 +35,8 @@ class FindBalanceUseCaseImplTest {
     fun `should return balance with category when categoryId provided`() {
         val category = Category(id = 1L, name = "Transport")
         val entries = listOf(
-            Entry(description = "Bus", amount = Money.of("100.00"), type = EntryType.EXPENSE, date = start, categoryId = 1L),
-            Entry(description = "Refund", amount = Money.of("200.00"), type = EntryType.INCOME, date = start, categoryId = 1L)
+            Entry(comment ="Bus", amount = Money.of("100.00"), type = EntryType.EXPENSE, date = start, categoryId = 1L),
+            Entry(comment ="Refund", amount = Money.of("200.00"), type = EntryType.INCOME, date = start, categoryId = 1L)
         )
 
         every { categoryOutputPort.findById(1L) } returns category
@@ -53,8 +53,8 @@ class FindBalanceUseCaseImplTest {
     @Test
     fun `should return balance without category when categoryId is null`() {
         val entries = listOf(
-            Entry(description = "Salary", amount = Money.of("500.00"), type = EntryType.INCOME, date = start, categoryId = 1L),
-            Entry(description = "Food", amount = Money.of("150.00"), type = EntryType.EXPENSE, date = start, categoryId = 2L)
+            Entry(comment ="Salary", amount = Money.of("500.00"), type = EntryType.INCOME, date = start, categoryId = 1L),
+            Entry(comment ="Food", amount = Money.of("150.00"), type = EntryType.EXPENSE, date = start, categoryId = 2L)
         )
 
         every { entryOutputPort.findByPeriod(period) } returns entries

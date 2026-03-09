@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 data class Entry(
     val id: Long? = null,
-    val description: String,
+    val comment: String,
     val amount: Money,
     val type: EntryType,
     val date: LocalDate,

@@ -16,13 +16,13 @@ class EntryTest {
     @Test
     fun `should create EXPENSE entry with valid data`() {
         val entry = Entry(
-            description = "Bus ticket",
+            comment ="Bus ticket",
             amount = Money.of("10.00"),
             type = EntryType.EXPENSE,
             date = date,
             categoryId = 1L
         )
-        assertEquals("Bus ticket", entry.description)
+        assertEquals("Bus ticket", entry.comment)
         assertEquals(Money.of("10.00"), entry.amount)
         assertEquals(EntryType.EXPENSE, entry.type)
         assertEquals(date, entry.date)
@@ -32,7 +32,7 @@ class EntryTest {
     @Test
     fun `should create INCOME entry with valid data`() {
         val entry = Entry(
-            description = "Salary",
+            comment ="Salary",
             amount = Money.of("5000.00"),
             type = EntryType.INCOME,
             date = date,
@@ -43,21 +43,21 @@ class EntryTest {
     }
 
     @Test
-    fun `should allow blank description`() {
+    fun `should allow blank comment`() {
         val entry = Entry(
-            description = "",
+            comment ="",
             amount = Money.of("10.00"),
             type = EntryType.EXPENSE,
             date = date,
             categoryId = 1L
         )
-        assertEquals("", entry.description)
+        assertEquals("", entry.comment)
     }
 
     @Test
     fun `should allow null subcategoryId`() {
         val entry = Entry(
-            description = "Misc",
+            comment ="Misc",
             amount = Money.of("10.00"),
             type = EntryType.EXPENSE,
             date = date,
@@ -70,7 +70,7 @@ class EntryTest {
     @Test
     fun `should store non-null subcategoryId`() {
         val entry = Entry(
-            description = "Fuel",
+            comment ="Fuel",
             amount = Money.of("50.00"),
             type = EntryType.EXPENSE,
             date = date,
@@ -84,7 +84,7 @@ class EntryTest {
     @Test
     fun `should default id to null`() {
         val entry = Entry(
-            description = "Test",
+            comment ="Test",
             amount = Money.of("1.00"),
             type = EntryType.INCOME,
             date = date,
@@ -97,7 +97,7 @@ class EntryTest {
     fun `should throw when amount is zero`() {
         assertThrows<InvalidEntryAmountException> {
             Entry(
-                description = "Bus ticket",
+                comment ="Bus ticket",
                 amount = Money.of("0.00"),
                 type = EntryType.EXPENSE,
                 date = date,
@@ -110,7 +110,7 @@ class EntryTest {
     fun `should throw when amount is zero using BigDecimal zero`() {
         assertThrows<InvalidEntryAmountException> {
             Entry(
-                description = "Bus ticket",
+                comment ="Bus ticket",
                 amount = Money.ZERO,
                 type = EntryType.INCOME,
                 date = date,

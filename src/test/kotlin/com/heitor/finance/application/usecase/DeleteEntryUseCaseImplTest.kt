@@ -19,7 +19,7 @@ class DeleteEntryUseCaseImplTest {
     private val useCase = DeleteEntryUseCaseImpl(entryOutputPort)
 
     private val entry = Entry(
-        id = 1L, description = "Salary", amount = Money.of(BigDecimal("3000.00")),
+        id = 1L, comment ="Salary", amount = Money.of(BigDecimal("3000.00")),
         type = EntryType.INCOME, date = LocalDate.now(), categoryId = 1L, subcategoryId = 5L
     )
 
