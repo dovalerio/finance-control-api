@@ -99,6 +99,16 @@ jacoco {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+    jvmArgs(
+        "-XX:+EnableDynamicAgentLoading", // suppresses MockK/ByteBuddy dynamic agent warning
+        "-Xshare:off"                      // suppresses JaCoCo CDS classpath-sharing warning
+    )
+    testLogging {
+        events("failed", "skipped")
+        showStandardStreams = false
+        showExceptions = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT
+    }
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test)

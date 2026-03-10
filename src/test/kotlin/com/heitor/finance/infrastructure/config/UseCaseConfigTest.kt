@@ -18,7 +18,7 @@ import com.heitor.finance.application.usecase.UpdateEntryUseCaseImpl
 import com.heitor.finance.application.usecase.UpdateSubcategoryUseCaseImpl
 import com.heitor.finance.domain.service.BalanceCalculatorService
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class UseCaseConfigTest {
@@ -30,114 +30,78 @@ class UseCaseConfigTest {
 
     @Test
     fun `balanceCalculatorService should return BalanceCalculatorService instance`() {
-        val service = config.balanceCalculatorService()
-
-        assertNotNull(service)
-        assert(service is BalanceCalculatorService)
+        assertThat(config.balanceCalculatorService()).isInstanceOf(BalanceCalculatorService::class.java)
     }
 
     @Test
     fun `createCategoryUseCase should return CreateCategoryUseCaseImpl`() {
-        val useCase = config.createCategoryUseCase(categoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is CreateCategoryUseCaseImpl)
+        assertThat(config.createCategoryUseCase(categoryOutputPort)).isInstanceOf(CreateCategoryUseCaseImpl::class.java)
     }
 
     @Test
-    fun `findCategoryUseCase should return CategoryApplicationService`() {
-        val useCase = config.findCategoryUseCase(categoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is FindCategoryUseCaseImpl)
+    fun `findCategoryUseCase should return FindCategoryUseCaseImpl`() {
+        assertThat(config.findCategoryUseCase(categoryOutputPort)).isInstanceOf(FindCategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `updateCategoryUseCase should return UpdateCategoryUseCaseImpl`() {
-        val useCase = config.updateCategoryUseCase(categoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is UpdateCategoryUseCaseImpl)
+        assertThat(config.updateCategoryUseCase(categoryOutputPort)).isInstanceOf(UpdateCategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `deleteCategoryUseCase should return DeleteCategoryUseCaseImpl`() {
-        val useCase = config.deleteCategoryUseCase(categoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is DeleteCategoryUseCaseImpl)
+        assertThat(config.deleteCategoryUseCase(categoryOutputPort)).isInstanceOf(DeleteCategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `findBalanceUseCase should return FindBalanceUseCaseImpl`() {
         val balanceCalculatorService = config.balanceCalculatorService()
-        val useCase = config.findBalanceUseCase(categoryOutputPort, entryOutputPort, balanceCalculatorService)
-
-        assertNotNull(useCase)
-        assert(useCase is FindBalanceUseCaseImpl)
+        assertThat(config.findBalanceUseCase(categoryOutputPort, entryOutputPort, balanceCalculatorService))
+            .isInstanceOf(FindBalanceUseCaseImpl::class.java)
     }
 
     @Test
     fun `createSubcategoryUseCase should return CreateSubcategoryUseCaseImpl`() {
-        val useCase = config.createSubcategoryUseCase(subcategoryOutputPort, categoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is CreateSubcategoryUseCaseImpl)
+        assertThat(config.createSubcategoryUseCase(subcategoryOutputPort, categoryOutputPort))
+            .isInstanceOf(CreateSubcategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `createEntryUseCase should return CreateEntryUseCaseImpl`() {
-        val useCase = config.createEntryUseCase(entryOutputPort, subcategoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is CreateEntryUseCaseImpl)
+        assertThat(config.createEntryUseCase(entryOutputPort, subcategoryOutputPort))
+            .isInstanceOf(CreateEntryUseCaseImpl::class.java)
     }
 
     @Test
     fun `findSubcategoryUseCase should return FindSubcategoryUseCaseImpl`() {
-        val useCase = config.findSubcategoryUseCase(subcategoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is FindSubcategoryUseCaseImpl)
+        assertThat(config.findSubcategoryUseCase(subcategoryOutputPort)).isInstanceOf(FindSubcategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `updateSubcategoryUseCase should return UpdateSubcategoryUseCaseImpl`() {
-        val useCase = config.updateSubcategoryUseCase(subcategoryOutputPort, categoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is UpdateSubcategoryUseCaseImpl)
+        assertThat(config.updateSubcategoryUseCase(subcategoryOutputPort, categoryOutputPort))
+            .isInstanceOf(UpdateSubcategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `deleteSubcategoryUseCase should return DeleteSubcategoryUseCaseImpl`() {
-        val useCase = config.deleteSubcategoryUseCase(subcategoryOutputPort, entryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is DeleteSubcategoryUseCaseImpl)
+        assertThat(config.deleteSubcategoryUseCase(subcategoryOutputPort, entryOutputPort))
+            .isInstanceOf(DeleteSubcategoryUseCaseImpl::class.java)
     }
 
     @Test
     fun `findEntryUseCase should return FindEntryUseCaseImpl`() {
-        val useCase = config.findEntryUseCase(entryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is FindEntryUseCaseImpl)
+        assertThat(config.findEntryUseCase(entryOutputPort)).isInstanceOf(FindEntryUseCaseImpl::class.java)
     }
 
     @Test
     fun `updateEntryUseCase should return UpdateEntryUseCaseImpl`() {
-        val useCase = config.updateEntryUseCase(entryOutputPort, subcategoryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is UpdateEntryUseCaseImpl)
+        assertThat(config.updateEntryUseCase(entryOutputPort, subcategoryOutputPort))
+            .isInstanceOf(UpdateEntryUseCaseImpl::class.java)
     }
 
     @Test
     fun `deleteEntryUseCase should return DeleteEntryUseCaseImpl`() {
-        val useCase = config.deleteEntryUseCase(entryOutputPort)
-
-        assertNotNull(useCase)
-        assert(useCase is DeleteEntryUseCaseImpl)
+        assertThat(config.deleteEntryUseCase(entryOutputPort)).isInstanceOf(DeleteEntryUseCaseImpl::class.java)
     }
 }
