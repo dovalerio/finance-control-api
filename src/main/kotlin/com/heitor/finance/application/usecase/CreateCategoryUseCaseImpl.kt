@@ -17,12 +17,13 @@ class CreateCategoryUseCaseImpl(
     override fun execute(request: CreateCategoryRequest): CategoryResponse {
         logger.debug("Creating category name={}", request.name)
 
-        if (categoryOutputPort.existsByName(request.name)) {
-            logger.warn("Category already exists name={}", request.name)
-            throw CategoryAlreadyExistsException(request.name)
+        val name = request.name!!
+        if (categoryOutputPort.existsByName(name)) {
+            logger.warn("Category already exists name={}", name)
+            throw CategoryAlreadyExistsException(name)
         }
 
-        val saved = categoryOutputPort.save(Category(name = request.name))
+        val saved = categoryOutputPort.save(Category(name = name))
         logger.info("Category created id={} name={}", saved.id, saved.name)
         return CategoryResponse(id = saved.id!!, name = saved.name)
     }

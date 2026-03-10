@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class CreateCategoryRequest(
     @JsonProperty("nome")
     @field:jakarta.validation.constraints.NotBlank(message = "O campo 'nome' é obrigatório")
-    val name: String
+    val name: String? = null
 )
 
 data class UpdateCategoryRequest(
     @JsonProperty("nome")
     @field:jakarta.validation.constraints.NotBlank(message = "O campo 'nome' é obrigatório")
-    val name: String
+    val name: String? = null
 )
 
 data class CategoryResponse(

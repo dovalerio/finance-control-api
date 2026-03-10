@@ -13,9 +13,10 @@ describe('POST /categorias', () => {
     })
   })
 
-  it('returns 400 when nome is missing', () => {
+  it('returns 400 with erro_validacao when nome is missing', () => {
     categoriesApi.create({} as { nome: string }).then((response) => {
       expect(response.status).to.eq(400)
+      expect(response.body.codigo).to.eq('erro_validacao')
     })
   })
 

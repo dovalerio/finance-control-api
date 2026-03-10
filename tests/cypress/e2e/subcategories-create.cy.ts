@@ -23,15 +23,17 @@ describe('POST /subcategorias', () => {
     })
   })
 
-  it('returns 400 when nome is missing', () => {
+  it('returns 400 with erro_validacao when nome is missing', () => {
     subcategoriesApi.create({ id_categoria } as { nome: string; id_categoria: number }).then((response) => {
       expect(response.status).to.eq(400)
+      expect(response.body.codigo).to.eq('erro_validacao')
     })
   })
 
-  it('returns 400 when id_categoria is missing', () => {
+  it('returns 400 with erro_validacao when id_categoria is missing', () => {
     subcategoriesApi.create({ nome: uniqueName() } as { nome: string; id_categoria: number }).then((response) => {
       expect(response.status).to.eq(400)
+      expect(response.body.codigo).to.eq('erro_validacao')
     })
   })
 

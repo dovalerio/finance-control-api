@@ -1,6 +1,6 @@
 {
-  "value": 150.00,
-  "date": "2026-03-07",
-  "subcategoryId": 1,
-  "comment": "Test entry"
+  "valor": 150.00,
+  "data": "2026-03-07",
+  "id_subcategoria": 1,
+  "comentario": "Test entry"
 }

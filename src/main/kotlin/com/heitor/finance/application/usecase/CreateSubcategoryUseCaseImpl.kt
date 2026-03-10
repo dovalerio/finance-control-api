@@ -20,18 +20,21 @@ class CreateSubcategoryUseCaseImpl(
     override fun execute(request: CreateSubcategoryRequest): SubcategoryResponse {
         logger.debug("Creating subcategory name={} categoryId={}", request.name, request.categoryId)
 
-        if (!categoryOutputPort.existsById(request.categoryId)) {
-            logger.warn("Category not found categoryId={}", request.categoryId)
-            throw CategoryNotFoundException(request.categoryId)
+        val name = request.name!!
+        val categoryId = request.categoryId!!
+
+        if (!categoryOutputPort.existsById(categoryId)) {
+            logger.warn("Category not found categoryId={}", categoryId)
+            throw CategoryNotFoundException(categoryId)
         }
 
-        if (subcategoryOutputPort.existsByNameInCategory(request.name, request.categoryId)) {
-            logger.warn("Subcategory already exists name={} categoryId={}", request.name, request.categoryId)
-            throw SubcategoryAlreadyExistsException(request.name, request.categoryId)
+        if (subcategoryOutputPort.existsByNameInCategory(name, categoryId)) {
+            logger.warn("Subcategory already exists name={} categoryId={}", name, categoryId)
+            throw SubcategoryAlreadyExistsException(name, categoryId)
         }
 
         val saved = subcategoryOutputPort.save(
-            Subcategory(name = request.name, categoryId = request.categoryId)
+            Subcategory(name = name, categoryId = categoryId)
         )
         logger.info("Subcategory created id={} name={} categoryId={}", saved.id, saved.name, saved.categoryId)
         return SubcategoryResponse(id = saved.id!!, name = saved.name, categoryId = saved.categoryId)

@@ -1,4 +1,4 @@
 {
-  "name": "Restaurant",
-  "categoryId": 1
+  "nome": "Restaurant",
+  "id_categoria": 1
 }

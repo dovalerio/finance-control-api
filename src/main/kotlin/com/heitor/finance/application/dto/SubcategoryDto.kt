@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class CreateSubcategoryRequest(
     @JsonProperty("nome")
     @field:jakarta.validation.constraints.NotBlank(message = "O campo 'nome' é obrigatório")
-    val name: String,
+    val name: String? = null,
     @JsonProperty("id_categoria")
     @field:jakarta.validation.constraints.NotNull(message = "O campo 'id_categoria' é obrigatório")
-    val categoryId: Long
+    val categoryId: Long? = null
 )
 
 data class SubcategoryResponse(

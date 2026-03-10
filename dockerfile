@@ -21,6 +21,8 @@ RUN useradd spring
 
 COPY --from=builder /workspace/build/libs/*.jar app.jar
 
+RUN mkdir /app/logs && chown spring /app/logs
+
 USER spring
 
 EXPOSE 8080

@@ -21,19 +21,21 @@ class UpdateSubcategoryUseCaseImpl(
         logger.debug("Updating subcategory id={} name={}", id, request.name)
 
         val existing = subcategoryOutputPort.findById(id) ?: throw SubcategoryNotFoundException(id)
+        val name = request.name!!
+        val categoryId = request.categoryId!!
 
-        if (!categoryOutputPort.existsById(request.categoryId)) {
-            throw CategoryNotFoundException(request.categoryId)
+        if (!categoryOutputPort.existsById(categoryId)) {
+            throw CategoryNotFoundException(categoryId)
         }
 
-        if (existing.name != request.name &&
-            subcategoryOutputPort.existsByNameInCategory(request.name, request.categoryId)
+        if (existing.name != name &&
+            subcategoryOutputPort.existsByNameInCategory(name, categoryId)
         ) {
-            throw SubcategoryAlreadyExistsException(request.name, request.categoryId)
+            throw SubcategoryAlreadyExistsException(name, categoryId)
         }
 
         val updated = subcategoryOutputPort.update(
-            existing.copy(name = request.name, categoryId = request.categoryId)
+            existing.copy(name = name, categoryId = categoryId)
         )
         logger.info("Subcategory updated id={} name={}", updated.id, updated.name)
         return SubcategoryResponse(id = updated.id!!, name = updated.name, categoryId = updated.categoryId)

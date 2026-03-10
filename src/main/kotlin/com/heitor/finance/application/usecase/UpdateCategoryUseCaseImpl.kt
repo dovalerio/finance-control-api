@@ -13,12 +13,13 @@ class UpdateCategoryUseCaseImpl(
 
     override fun execute(id: Long, request: CreateCategoryRequest): CategoryResponse {
         val existing = categoryOutputPort.findById(id) ?: throw CategoryNotFoundException(id)
+        val name = request.name!!
 
-        if (existing.name != request.name && categoryOutputPort.existsByName(request.name)) {
-            throw CategoryAlreadyExistsException(request.name)
+        if (existing.name != name && categoryOutputPort.existsByName(name)) {
+            throw CategoryAlreadyExistsException(name)
         }
 
-        val updated = categoryOutputPort.update(existing.copy(name = request.name))
+        val updated = categoryOutputPort.update(existing.copy(name = name))
         return CategoryResponse(id = updated.id!!, name = updated.name)
     }
 }
