@@ -101,7 +101,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val detail = ex.bindingResult.fieldErrors
-            .joinToString("; ") { "${it.field}: ${it.defaultMessage}" }
+            .joinToString("; ") { it.defaultMessage ?: "Campo inválido" }
         logger.warn("Validation error: {}", detail)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
             ErrorResponse(codigo = "erro_validacao", mensagem = detail)

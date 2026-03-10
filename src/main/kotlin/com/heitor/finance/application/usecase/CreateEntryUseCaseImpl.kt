@@ -22,14 +22,16 @@ class CreateEntryUseCaseImpl(
     override fun execute(request: CreateEntryRequest): EntryResponse {
         logger.debug("Creating entry value={} subcategoryId={}", request.value, request.subcategoryId)
 
-        val subcategory = subcategoryOutputPort.findById(request.subcategoryId)
+        val subcategoryId = request.subcategoryId!!
+        val subcategory = subcategoryOutputPort.findById(subcategoryId)
             ?: run {
-                logger.warn("Subcategory not found id={}", request.subcategoryId)
-                throw SubcategoryNotFoundException(request.subcategoryId)
+                logger.warn("Subcategory not found id={}", subcategoryId)
+                throw SubcategoryNotFoundException(subcategoryId)
             }
 
-        val type = if (request.value >= BigDecimal.ZERO) EntryType.INCOME else EntryType.EXPENSE
-        val amount = Money.of(request.value.abs())
+        val value = request.value!!
+        val type = if (value >= BigDecimal.ZERO) EntryType.INCOME else EntryType.EXPENSE
+        val amount = Money.of(value.abs())
 
         val entry = Entry(
             comment = request.comment ?: "",

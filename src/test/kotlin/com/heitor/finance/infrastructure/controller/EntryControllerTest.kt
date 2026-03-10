@@ -63,6 +63,36 @@ class EntryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
         ).hasStatus(400)
+            .bodyJson()
+            .extractingPath("$.codigo")
+            .asString()
+            .isEqualTo("erro_validacao")
+    }
+
+    @Test
+    fun `POST lancamentos should return 400 with message when valor is missing`() {
+        assertThat(
+            mockMvc.post().uri("/v1/lancamentos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"id_subcategoria":5}""")
+        ).hasStatus(400)
+            .bodyJson()
+            .extractingPath("$.mensagem")
+            .asString()
+            .isEqualTo("O campo 'valor' é obrigatório")
+    }
+
+    @Test
+    fun `POST lancamentos should return 400 with message when id_subcategoria is missing`() {
+        assertThat(
+            mockMvc.post().uri("/v1/lancamentos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"valor":150.00}""")
+        ).hasStatus(400)
+            .bodyJson()
+            .extractingPath("$.mensagem")
+            .asString()
+            .isEqualTo("O campo 'id_subcategoria' é obrigatório")
     }
 
     @Test

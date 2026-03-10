@@ -24,11 +24,13 @@ class UpdateEntryUseCaseImpl(
 
         val existing = entryOutputPort.findById(id) ?: throw EntryNotFoundException(id)
 
-        val subcategory = subcategoryOutputPort.findById(request.subcategoryId)
-            ?: throw SubcategoryNotFoundException(request.subcategoryId)
+        val subcategoryId = request.subcategoryId!!
+        val subcategory = subcategoryOutputPort.findById(subcategoryId)
+            ?: throw SubcategoryNotFoundException(subcategoryId)
 
-        val type = if (request.value >= BigDecimal.ZERO) EntryType.INCOME else EntryType.EXPENSE
-        val amount = Money.of(request.value.abs())
+        val value = request.value!!
+        val type = if (value >= BigDecimal.ZERO) EntryType.INCOME else EntryType.EXPENSE
+        val amount = Money.of(value.abs())
 
         val updated = entryOutputPort.save(
             existing.copy(
