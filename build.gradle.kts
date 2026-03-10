@@ -18,10 +18,6 @@ java {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 // Exclui Logback (default do Spring Boot) para usar Log4j2
 configurations.all {
     exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
@@ -109,6 +105,21 @@ tasks.test {
         showExceptions = true
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT
     }
+    addTestListener(object : TestListener {
+        override fun beforeSuite(suite: TestDescriptor) {}
+        override fun beforeTest(testDescriptor: TestDescriptor) {}
+        override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {}
+        override fun afterSuite(suite: TestDescriptor, result: TestResult) {
+            if (suite.parent == null) {
+                println(
+                    "\nTests run: ${result.testCount}  " +
+                    "Passed: ${result.successfulTestCount}  " +
+                    "Failed: ${result.failedTestCount}  " +
+                    "Skipped: ${result.skippedTestCount}"
+                )
+            }
+        }
+    })
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
