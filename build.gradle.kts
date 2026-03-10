@@ -4,7 +4,7 @@ plugins {
     kotlin("plugin.jpa") version "2.2.21"
     jacoco
 
-    id("org.springframework.boot") version "4.0.3"
+    id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -17,6 +17,10 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+// Spring Boot 3.5.3 BOM upgrades Testcontainers to 1.21.2, which has a Docker Desktop 4.x
+// detection regression on Windows. Override the BOM-managed property to pin to 1.20.4.
+extra["testcontainers.version"] = "1.20.4"
 
 // Exclui Logback (default do Spring Boot) para usar Log4j2
 configurations.all {
@@ -42,15 +46,14 @@ dependencies {
     // Jackson Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // Swagger UI (WebJar — springdoc-openapi not yet compatible with Spring Boot 4)
-    implementation("org.webjars:swagger-ui:5.18.2")
-    runtimeOnly("org.webjars:webjars-locator-lite:1.0.0")
+    // OpenAPI / Swagger UI
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
     // Database
     runtimeOnly("org.postgresql:postgresql")
 
     // Flyway migrations
-    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
 
     // Observability (Micrometer already comes with Actuator)
@@ -95,6 +98,25 @@ jacoco {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+
+    // Docker Desktop 4.34+ on Windows rejects API requests with version < 1.45.
+    // docker-java (used by Testcontainers 1.20.4) defaults to API v1.41, which causes
+    // a 400 Bad Request for every endpoint, making Testcontainers fail to detect Docker.
+    // Solution: set DOCKER_API_VERSION >= 1.45 and use the TCP endpoint exposed by Desktop's
+    // "Expose daemon on tcp://localhost:2375 without TLS" setting (named pipes require
+    // Desktop auth tokens that docker-java does not provide).
+    // systemProperty is used to guarantee propagation to the forked test worker JVM.
+    if (System.getProperty("os.name")?.contains("Windows", ignoreCase = true) == true) {
+        val dockerHost = System.getenv("DOCKER_HOST") ?: "tcp://localhost:2375"
+        environment("DOCKER_HOST", dockerHost)
+        systemProperty("DOCKER_HOST", dockerHost)
+        // docker-java reads the API version from the "api.version" system property
+        // (or from DOCKER_API_VERSION env var). The system property name is different
+        // from the environment variable name.
+        systemProperty("api.version", "1.45")
+        environment("DOCKER_API_VERSION", "1.45")
+    }
+
     jvmArgs(
         "-XX:+EnableDynamicAgentLoading", // suppresses MockK/ByteBuddy dynamic agent warning
         "-Xshare:off"                      // suppresses JaCoCo CDS classpath-sharing warning
