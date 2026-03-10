@@ -4,7 +4,7 @@ import com.heitor.finance.application.port.input.DeleteCategoryUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
-import com.heitor.finance.application.service.CategoryApplicationService
+import com.heitor.finance.application.usecase.FindCategoryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateCategoryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateEntryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateSubcategoryUseCaseImpl
@@ -33,7 +33,7 @@ class UseCaseConfig {
 
     @Bean
     fun findCategoryUseCase(categoryOutputPort: CategoryOutputPort) =
-        CategoryApplicationService(categoryOutputPort)
+        FindCategoryUseCaseImpl(categoryOutputPort)
 
     @Bean
     fun updateCategoryUseCase(categoryOutputPort: CategoryOutputPort) =

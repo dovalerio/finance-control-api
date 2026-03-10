@@ -3,7 +3,7 @@ package com.heitor.finance.infrastructure.config
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
-import com.heitor.finance.application.service.CategoryApplicationService
+import com.heitor.finance.application.usecase.FindCategoryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateCategoryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateEntryUseCaseImpl
 import com.heitor.finance.application.usecase.CreateSubcategoryUseCaseImpl
@@ -49,7 +49,7 @@ class UseCaseConfigTest {
         val useCase = config.findCategoryUseCase(categoryOutputPort)
 
         assertNotNull(useCase)
-        assert(useCase is CategoryApplicationService)
+        assert(useCase is FindCategoryUseCaseImpl)
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.heitor.finance.application.service
+package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryNotFoundException
@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class CategoryApplicationServiceTest {
+class FindCategoryUseCaseImplTest {
 
     private val categoryOutputPort: CategoryOutputPort = mockk()
-    private val service = CategoryApplicationService(categoryOutputPort)
+    private val service = FindCategoryUseCaseImpl(categoryOutputPort)
 
     @Test
     fun `findAll without filter returns all categories`() {

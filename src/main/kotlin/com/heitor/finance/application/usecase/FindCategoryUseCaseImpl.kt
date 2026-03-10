@@ -1,11 +1,11 @@
-package com.heitor.finance.application.service
+package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CategoryResponse
 import com.heitor.finance.application.port.input.FindCategoryUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryNotFoundException
 
-class CategoryApplicationService(
+class FindCategoryUseCaseImpl(
     private val categoryOutputPort: CategoryOutputPort
 ) : FindCategoryUseCase {
 
