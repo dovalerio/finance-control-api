@@ -4,6 +4,7 @@ import com.heitor.finance.application.dto.CategoryResponse
 import com.heitor.finance.application.dto.CreateCategoryRequest
 import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.UpdateCategoryUseCase
+import com.heitor.finance.application.util.orThrow
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
@@ -13,7 +14,7 @@ class UpdateCategoryUseCaseImpl(
 ) : UpdateCategoryUseCase {
 
     override fun execute(id: Long, request: CreateCategoryRequest): CategoryResponse {
-        val existing = categoryOutputPort.findById(id) ?: throw CategoryNotFoundException(id)
+        val existing = categoryOutputPort.findById(id).orThrow { CategoryNotFoundException(id) }
         val name = request.name!!
 
         if (existing.name != name && categoryOutputPort.existsByName(name)) {

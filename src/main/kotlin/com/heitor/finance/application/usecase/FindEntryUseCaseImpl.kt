@@ -4,6 +4,7 @@ import com.heitor.finance.application.dto.EntryResponse
 import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.FindEntryUseCase
 import com.heitor.finance.application.port.output.EntryOutputPort
+import com.heitor.finance.application.util.orThrow
 import com.heitor.finance.domain.exception.EntryNotFoundException
 import org.apache.logging.log4j.LogManager
 import java.time.LocalDate
@@ -21,7 +22,7 @@ class FindEntryUseCaseImpl(
 
     override fun findById(id: Long): EntryResponse {
         logger.debug("Finding entry id={}", id)
-        val entry = entryOutputPort.findById(id) ?: throw EntryNotFoundException(id)
+        val entry = entryOutputPort.findById(id).orThrow { EntryNotFoundException(id) }
         return entry.toResponse()
     }
 

@@ -4,6 +4,7 @@ import com.heitor.finance.application.dto.CreateSubcategoryRequest
 import com.heitor.finance.application.dto.SubcategoryResponse
 import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.UpdateSubcategoryUseCase
+import com.heitor.finance.application.util.orThrow
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryNotFoundException
@@ -21,7 +22,7 @@ class UpdateSubcategoryUseCaseImpl(
     override fun execute(id: Long, request: CreateSubcategoryRequest): SubcategoryResponse {
         logger.debug("Updating subcategory id={} name={}", id, request.name)
 
-        val existing = subcategoryOutputPort.findById(id) ?: throw SubcategoryNotFoundException(id)
+        val existing = subcategoryOutputPort.findById(id).orThrow { SubcategoryNotFoundException(id) }
         val name = request.name!!
         val categoryId = request.categoryId!!
 

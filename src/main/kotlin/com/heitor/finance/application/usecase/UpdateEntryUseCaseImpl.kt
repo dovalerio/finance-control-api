@@ -4,6 +4,7 @@ import com.heitor.finance.application.dto.CreateEntryRequest
 import com.heitor.finance.application.dto.EntryResponse
 import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.UpdateEntryUseCase
+import com.heitor.finance.application.util.orThrow
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
 import com.heitor.finance.domain.exception.EntryNotFoundException
@@ -24,11 +25,11 @@ class UpdateEntryUseCaseImpl(
     override fun execute(id: Long, request: CreateEntryRequest): EntryResponse {
         logger.debug("Updating entry id={} value={}", id, request.value)
 
-        val existing = entryOutputPort.findById(id) ?: throw EntryNotFoundException(id)
+        val existing = entryOutputPort.findById(id).orThrow { EntryNotFoundException(id) }
 
         val subcategoryId = request.subcategoryId!!
         val subcategory = subcategoryOutputPort.findById(subcategoryId)
-            ?: throw SubcategoryNotFoundException(subcategoryId)
+            .orThrow { SubcategoryNotFoundException(subcategoryId) }
 
         val value = request.value!!
         val type = if (value >= BigDecimal.ZERO) EntryType.INCOME else EntryType.EXPENSE
