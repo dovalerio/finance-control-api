@@ -15,6 +15,7 @@
     "test:report": "npm run test:e2e && npm run report:generate && npm run report:summary"
   },
   "devDependencies": {
+    "ajv": "^8.18.0",
     "cypress": "^13.17.0",
     "cypress-multi-reporters": "^1.6.4",
     "mochawesome": "^7.1.3",
