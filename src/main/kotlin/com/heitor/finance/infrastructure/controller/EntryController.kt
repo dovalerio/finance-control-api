@@ -25,8 +25,8 @@ class EntryController(
     @GetMapping
     fun findAll(
         @RequestParam("id_subcategoria", required = false) subcategoryId: Long?,
-        @RequestParam("data_inicio", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate?,
-        @RequestParam("data_fim", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate?
+        @RequestParam("data_inicio", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") startDate: LocalDate?,
+        @RequestParam("data_fim", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") endDate: LocalDate?
     ): ResponseEntity<List<EntryResponse>> =
         ResponseEntity.ok(findEntryUseCase.findAll(subcategoryId, startDate, endDate))
 

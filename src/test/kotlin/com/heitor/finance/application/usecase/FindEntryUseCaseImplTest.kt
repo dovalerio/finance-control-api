@@ -8,7 +8,6 @@ import com.heitor.finance.domain.valueobject.Money
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
@@ -90,12 +89,12 @@ class FindEntryUseCaseImplTest {
     }
 
     @Test
-    fun `findAll should map blank description to null comment`() {
+    fun `findAll should map blank description to empty string comment`() {
         every { entryOutputPort.findByFilters(null, null, null) } returns listOf(expenseEntry)
 
         val result = useCase.findAll(null, null, null)
 
-        assertNull(result[0].comment)
+        assertEquals("", result[0].comment)
     }
 
     @Test

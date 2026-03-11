@@ -1,5 +1,6 @@
 package com.heitor.finance.application.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.heitor.finance.domain.model.Entry
 import com.heitor.finance.domain.model.signedValue
@@ -17,6 +18,7 @@ data class CreateEntryRequest(
     @JsonProperty("valor") val value: BigDecimal? = null,
     @field:NotNull(message = "O campo 'id_subcategoria' é obrigatório")
     @JsonProperty("id_subcategoria") val subcategoryId: Long? = null,
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @JsonProperty("data") val date: LocalDate? = null,
     @JsonProperty("comentario") val comment: String? = null
 )
@@ -24,9 +26,10 @@ data class CreateEntryRequest(
 data class EntryResponse(
     @JsonProperty("id_lancamento") val id: Long,
     @JsonProperty("valor") val value: BigDecimal,
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @JsonProperty("data") val date: LocalDate,
     @JsonProperty("id_subcategoria") val subcategoryId: Long?,
-    @JsonProperty("comentario") val comment: String?
+    @JsonProperty("comentario") val comment: String
 )
 
 fun Entry.toResponse() = EntryResponse(
@@ -34,5 +37,5 @@ fun Entry.toResponse() = EntryResponse(
     value = signedValue(),
     date = date,
     subcategoryId = subcategoryId,
-    comment = comment.ifBlank { null }
+    comment = comment.ifBlank { "" }
 )

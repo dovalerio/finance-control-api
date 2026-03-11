@@ -32,8 +32,8 @@ class BalanceControllerTest {
 
         assertThat(
             mockMvc.get().uri("/v1/balanco")
-                .param("data_inicio", "2024-01-01")
-                .param("data_fim", "2024-01-31")
+                .param("data_inicio", "01/01/2024")
+                .param("data_fim", "31/01/2024")
                 .param("id_categoria", "1")
         ).hasStatusOk()
     }
@@ -49,8 +49,8 @@ class BalanceControllerTest {
 
         assertThat(
             mockMvc.get().uri("/v1/balanco")
-                .param("data_inicio", "2024-01-01")
-                .param("data_fim", "2024-01-31")
+                .param("data_inicio", "01/01/2024")
+                .param("data_fim", "31/01/2024")
         ).hasStatusOk()
     }
 
@@ -60,8 +60,8 @@ class BalanceControllerTest {
 
         assertThat(
             mockMvc.get().uri("/v1/balanco")
-                .param("data_inicio", "2024-01-01")
-                .param("data_fim", "2024-01-31")
+                .param("data_inicio", "01/01/2024")
+                .param("data_fim", "31/01/2024")
                 .param("id_categoria", "99")
         ).hasStatus(404)
     }
@@ -73,8 +73,8 @@ class BalanceControllerTest {
 
         assertThat(
             mockMvc.get().uri("/v1/balanco")
-                .param("data_inicio", "2024-02-01")
-                .param("data_fim", "2024-01-01")
+                .param("data_inicio", "01/02/2024")
+                .param("data_fim", "01/01/2024")
         ).hasStatus(400)
     }
 
@@ -82,7 +82,7 @@ class BalanceControllerTest {
     fun `GET balanco should return 400 when data_inicio is missing`() {
         assertThat(
             mockMvc.get().uri("/v1/balanco")
-                .param("data_fim", "2024-01-31")
+                .param("data_fim", "31/01/2024")
         ).hasStatus(400)
     }
 
@@ -90,7 +90,7 @@ class BalanceControllerTest {
     fun `GET balanco should return 400 when data_fim is missing`() {
         assertThat(
             mockMvc.get().uri("/v1/balanco")
-                .param("data_inicio", "2024-01-01")
+                .param("data_inicio", "01/01/2024")
         ).hasStatus(400)
     }
 
@@ -100,8 +100,8 @@ class BalanceControllerTest {
             com.heitor.finance.domain.exception.InvalidPeriodException("Start date must not be after end date")
 
         val result = mockMvc.get().uri("/v1/balanco")
-            .param("data_inicio", "2024-02-01")
-            .param("data_fim", "2024-01-01")
+            .param("data_inicio", "01/02/2024")
+            .param("data_fim", "01/01/2024")
 
         assertThat(result)
             .hasStatus(400)
@@ -109,5 +109,24 @@ class BalanceControllerTest {
             .extractingPath("$.mensagem")
             .asString()
             .contains("Start date")
+    }
+
+    @Test
+    fun `GET balanco should serialize receita despesa saldo as strings`() {
+        every { findBalanceUseCase.findByPeriodAndCategory(any(), any(), null) } returns BalanceResponse(
+            category = null,
+            revenue = BigDecimal("2320"),
+            expense = BigDecimal("1000"),
+            balance = BigDecimal("1320")
+        )
+
+        val result = mockMvc.get().uri("/v1/balanco")
+            .param("data_inicio", "01/01/2021")
+            .param("data_fim", "31/01/2021")
+
+        assertThat(result).hasStatusOk()
+        assertThat(result).bodyJson().extractingPath("$.receita").asString().isEqualTo("2320.00")
+        assertThat(result).bodyJson().extractingPath("$.despesa").asString().isEqualTo("1000.00")
+        assertThat(result).bodyJson().extractingPath("$.saldo").asString().isEqualTo("1320.00")
     }
 }

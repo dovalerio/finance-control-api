@@ -15,8 +15,8 @@ class BalanceController(
 
     @GetMapping
     fun findBalance(
-        @RequestParam("data_inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate,
-        @RequestParam("data_fim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate,
+        @RequestParam("data_inicio") @DateTimeFormat(pattern = "dd/MM/yyyy") startDate: LocalDate,
+        @RequestParam("data_fim") @DateTimeFormat(pattern = "dd/MM/yyyy") endDate: LocalDate,
         @RequestParam("id_categoria", required = false) categoryId: Long?
     ): ResponseEntity<BalanceResponse> =
         ResponseEntity.ok(findBalanceUseCase.findByPeriodAndCategory(startDate, endDate, categoryId))

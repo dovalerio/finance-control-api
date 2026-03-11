@@ -76,7 +76,7 @@ class CreateEntryUseCaseImplTest {
 
         assertEquals(2L, response.id)
         assertEquals(BigDecimal("-80.00"), response.value)
-        assertEquals(null, response.comment)
+        assertEquals("", response.comment)
     }
 
     @Test

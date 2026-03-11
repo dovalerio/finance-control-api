@@ -41,7 +41,7 @@ class EntryControllerTest {
         assertThat(
             mockMvc.post().uri("/v1/lancamentos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"valor":150.00,"id_subcategoria":5,"data":"2024-03-10","comentario":"Salary"}""")
+                .content("""{"valor":150.00,"id_subcategoria":5,"data":"10/03/2024","comentario":"Salary"}""")
         ).hasStatus(201)
     }
 
@@ -128,8 +128,8 @@ class EntryControllerTest {
 
         assertThat(
             mockMvc.get().uri("/v1/lancamentos")
-                .param("data_inicio", "2024-03-01")
-                .param("data_fim", "2024-03-31")
+                .param("data_inicio", "01/03/2024")
+                .param("data_fim", "31/03/2024")
         ).hasStatusOk()
     }
 
@@ -201,5 +201,37 @@ class EntryControllerTest {
         every { deleteEntryUseCase.execute(99L) } throws EntryNotFoundException(99L)
 
         assertThat(mockMvc.delete().uri("/v1/lancamentos/99")).hasStatus(404)
+    }
+
+    @Test
+    fun `POST lancamentos should accept date in dd-MM-yyyy format`() {
+        every { createEntryUseCase.execute(any()) } returns entryResponse
+
+        assertThat(
+            mockMvc.post().uri("/v1/lancamentos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"valor":200.00,"id_subcategoria":5,"data":"01/01/2021"}""")
+        ).hasStatus(201)
+    }
+
+    @Test
+    fun `GET lancamentos response should return date in dd-MM-yyyy format`() {
+        every { findEntryUseCase.findById(1L) } returns entryResponse
+
+        assertThat(mockMvc.get().uri("/v1/lancamentos/1"))
+            .hasStatusOk()
+            .bodyJson()
+            .extractingPath("$.data")
+            .asString()
+            .isEqualTo("10/03/2024")
+    }
+
+    @Test
+    fun `POST lancamentos should return 400 for invalid date format`() {
+        assertThat(
+            mockMvc.post().uri("/v1/lancamentos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"valor":150.00,"id_subcategoria":5,"data":"2024-01-01"}""")
+        ).hasStatus(400)
     }
 }
