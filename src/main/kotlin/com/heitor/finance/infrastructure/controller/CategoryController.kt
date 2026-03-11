@@ -1,7 +1,7 @@
 package com.heitor.finance.infrastructure.controller
 
+import com.heitor.finance.application.dto.CategoryRequest
 import com.heitor.finance.application.dto.CategoryResponse
-import com.heitor.finance.application.dto.CreateCategoryRequest
 import com.heitor.finance.application.port.input.CreateCategoryUseCase
 import com.heitor.finance.application.port.input.DeleteCategoryUseCase
 import com.heitor.finance.application.port.input.FindCategoryUseCase
@@ -31,12 +31,12 @@ class CategoryController(
     @PutMapping("/{id_categoria}")
     fun update(
         @PathVariable("id_categoria") id: Long,
-        @Valid @RequestBody request: CreateCategoryRequest
+        @Valid @RequestBody request: CategoryRequest
     ): ResponseEntity<CategoryResponse> =
         ResponseEntity.ok(updateCategoryUseCase.execute(id, request))
 
     @PostMapping
-    fun create(@Valid @RequestBody request: CreateCategoryRequest): ResponseEntity<CategoryResponse> =
+    fun create(@Valid @RequestBody request: CategoryRequest): ResponseEntity<CategoryResponse> =
         ResponseEntity.status(HttpStatus.CREATED).body(createCategoryUseCase.execute(request))
 
     @DeleteMapping("/{id_categoria}")

@@ -1,6 +1,6 @@
 package com.heitor.finance.application.usecase
 
-import com.heitor.finance.application.dto.CreateCategoryRequest
+import com.heitor.finance.application.dto.CategoryRequest
 import com.heitor.finance.application.dto.CategoryResponse
 import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.CreateCategoryUseCase
@@ -15,7 +15,7 @@ class CreateCategoryUseCaseImpl(
 
     private val logger = LogManager.getLogger(CreateCategoryUseCaseImpl::class.java)
 
-    override fun execute(request: CreateCategoryRequest): CategoryResponse {
+    override fun execute(request: CategoryRequest): CategoryResponse {
         logger.debug("Creating category name={}", request.name)
 
         val name = request.name!!

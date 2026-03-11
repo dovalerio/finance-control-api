@@ -1,6 +1,6 @@
 package com.heitor.finance.application.usecase
 
-import com.heitor.finance.application.dto.CreateCategoryRequest
+import com.heitor.finance.application.dto.CategoryRequest
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.model.Category
@@ -18,7 +18,7 @@ class CreateCategoryUseCaseImplTest {
 
     @Test
     fun `should create category and return response`() {
-        val request = CreateCategoryRequest(name = "Transport")
+        val request = CategoryRequest(name = "Transport")
         val savedCategory = Category(id = 1L, name = "Transport")
 
         every { categoryOutputPort.existsByName("Transport") } returns false
@@ -32,7 +32,7 @@ class CreateCategoryUseCaseImplTest {
 
     @Test
     fun `should throw CategoryAlreadyExistsException when name already exists`() {
-        val request = CreateCategoryRequest(name = "Transport")
+        val request = CategoryRequest(name = "Transport")
 
         every { categoryOutputPort.existsByName("Transport") } returns true
 

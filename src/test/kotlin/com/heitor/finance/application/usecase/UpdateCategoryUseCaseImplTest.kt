@@ -1,6 +1,6 @@
 package com.heitor.finance.application.usecase
 
-import com.heitor.finance.application.dto.CreateCategoryRequest
+import com.heitor.finance.application.dto.CategoryRequest
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
 import com.heitor.finance.domain.exception.CategoryNotFoundException
@@ -21,7 +21,7 @@ class UpdateCategoryUseCaseImplTest {
     fun `should update category name and return response`() {
         val existing = Category(id = 1L, name = "Transport")
         val updated = Category(id = 1L, name = "Food")
-        val request = CreateCategoryRequest(name = "Food")
+        val request = CategoryRequest(name = "Food")
 
         every { categoryOutputPort.findById(1L) } returns existing
         every { categoryOutputPort.existsByName("Food") } returns false
@@ -37,7 +37,7 @@ class UpdateCategoryUseCaseImplTest {
     @Test
     fun `should allow update when name is unchanged`() {
         val existing = Category(id = 1L, name = "Transport")
-        val request = CreateCategoryRequest(name = "Transport")
+        val request = CategoryRequest(name = "Transport")
 
         every { categoryOutputPort.findById(1L) } returns existing
         every { categoryOutputPort.update(existing) } returns existing
@@ -53,7 +53,7 @@ class UpdateCategoryUseCaseImplTest {
         every { categoryOutputPort.findById(99L) } returns null
 
         assertThrows<CategoryNotFoundException> {
-            useCase.execute(99L, CreateCategoryRequest(name = "Food"))
+            useCase.execute(99L, CategoryRequest(name = "Food"))
         }
 
         verify(exactly = 0) { categoryOutputPort.update(any()) }
@@ -62,7 +62,7 @@ class UpdateCategoryUseCaseImplTest {
     @Test
     fun `should throw CategoryAlreadyExistsException when new name is taken`() {
         val existing = Category(id = 1L, name = "Transport")
-        val request = CreateCategoryRequest(name = "Food")
+        val request = CategoryRequest(name = "Food")
 
         every { categoryOutputPort.findById(1L) } returns existing
         every { categoryOutputPort.existsByName("Food") } returns true

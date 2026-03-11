@@ -3,13 +3,7 @@ package com.heitor.finance.application.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.heitor.finance.domain.model.Category
 
-data class CreateCategoryRequest(
-    @JsonProperty("nome")
-    @field:jakarta.validation.constraints.NotBlank(message = "O campo 'nome' é obrigatório")
-    val name: String? = null
-)
-
-data class UpdateCategoryRequest(
+data class CategoryRequest(
     @JsonProperty("nome")
     @field:jakarta.validation.constraints.NotBlank(message = "O campo 'nome' é obrigatório")
     val name: String? = null
