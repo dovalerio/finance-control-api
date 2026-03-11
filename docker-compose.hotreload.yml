@@ -1,0 +1,66 @@
+# Compose para desenvolvimento completamente containerizado com hot reload.
+# A aplicação roda via bootRun dentro do container com o código-fonte montado.
+#
+# Uso:
+#   docker compose -f docker-compose.hotreload.yml up
+#
+# O Gradle dentro do container recompila automaticamente via watcher
+# e o DevTools reinicia o contexto Spring quando detecta mudanças.
+#
+# Nota: na primeira execução o Gradle baixará as dependências.
+# O volume gradle-cache acelera execuções subsequentes.
+#
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finance-db-hotreload
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: finance_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - finance_db_hotreload_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d finance_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    image: gradle:9.3.1-jdk21
+    container_name: finance-api-hotreload
+    working_dir: /app
+    # Monta o código-fonte e o cache do Gradle como volumes
+    volumes:
+      - .:/app
+      - gradle-cache:/home/gradle/.gradle
+    # Compila continuamente em background e roda bootRun em paralelo
+    command: >
+      bash -c "
+        ./gradlew compileKotlin --no-daemon &&
+        ./gradlew -t compileKotlin --no-daemon &
+        ./gradlew bootRun --no-daemon
+      "
+    ports:
+      - "8080:8080"
+      - "35729:35729"   # LiveReload (opcional)
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/finance_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      API_KEY: aXRhw7o=
+      APP_PORT: 8080
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  finance_db_hotreload_data:
+    driver: local
+  gradle-cache:
+    driver: local

@@ -59,6 +59,9 @@ dependencies {
     // Observability (Micrometer already comes with Actuator)
     implementation("io.micrometer:micrometer-registry-prometheus")
 
+    // Hot reload — excluído automaticamente do bootJar (não vai para produção)
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     // --- TESTS ---
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -93,6 +96,15 @@ allOpen {
 
 jacoco {
     toolVersion = "0.8.11"
+}
+
+tasks.bootRun {
+    // Ativa o profile de desenvolvimento e habilita DevTools restart
+    args("--spring.profiles.active=dev")
+    jvmArgs(
+        "-Dspring.devtools.restart.enabled=true",
+        "-Dspring.devtools.livereload.enabled=true"
+    )
 }
 
 tasks.test {

@@ -1,0 +1,28 @@
+# Compose para desenvolvimento local.
+# Sobe apenas o banco de dados; a aplicação roda localmente via:
+#
+#   Terminal 1 (compilação contínua):  ./gradlew -t compileKotlin
+#   Terminal 2 (app com hot reload):   ./gradlew bootRun
+#
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finance-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: finance_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - finance_db_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d finance_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  finance_db_dev_data:
+    driver: local
