@@ -17,14 +17,15 @@ class SubcategoryRepositoryAdapter(
 
     private val logger = LogManager.getLogger(SubcategoryRepositoryAdapter::class.java)
 
-    override fun findAll(name: String?, categoryId: Long?): List<Subcategory> {
-        logger.debug("Finding subcategories name={} categoryId={}", name ?: "none", categoryId ?: "none")
-        val entities = when {
-            name != null && categoryId != null -> subcategoryJpaRepository.findByNameContainingIgnoreCaseAndCategoryId(name, categoryId)
-            name != null -> subcategoryJpaRepository.findByNameContainingIgnoreCase(name)
-            categoryId != null -> subcategoryJpaRepository.findByCategoryId(categoryId)
-            else -> subcategoryJpaRepository.findAll()
+    override fun findAll(name: String?, subcategoryId: Long?): List<Subcategory> {
+        logger.debug("Finding subcategories name={} subcategoryId={}", name ?: "none", subcategoryId ?: "none")
+        if (subcategoryId != null) {
+            return subcategoryJpaRepository.findById(subcategoryId)
+                .map { listOf(SubcategoryMapper.toDomain(it)) }
+                .orElse(emptyList())
         }
+        val entities = if (name != null) subcategoryJpaRepository.findByNameContainingIgnoreCase(name)
+                       else subcategoryJpaRepository.findAll()
         return entities.map(SubcategoryMapper::toDomain)
     }
 

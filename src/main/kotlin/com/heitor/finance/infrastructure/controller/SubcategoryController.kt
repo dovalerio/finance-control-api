@@ -23,9 +23,9 @@ class SubcategoryController(
     @GetMapping
     fun findAll(
         @RequestParam("nome", required = false) name: String?,
-        @RequestParam("id_categoria", required = false) categoryId: Long?
+        @RequestParam("id_subcategoria", required = false) subcategoryId: Long?
     ): ResponseEntity<List<SubcategoryResponse>> =
-        ResponseEntity.ok(findSubcategoryUseCase.findAll(name, categoryId))
+        ResponseEntity.ok(findSubcategoryUseCase.findAll(name, subcategoryId))
 
     @GetMapping("/{id_subcategoria}")
     fun findById(@PathVariable("id_subcategoria") id: Long): ResponseEntity<SubcategoryResponse> =

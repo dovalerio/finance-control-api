@@ -48,22 +48,13 @@ class FindSubcategoryUseCaseImplTest {
     }
 
     @Test
-    fun `findAll should forward categoryId filter to output port`() {
-        every { subcategoryOutputPort.findAll(null, 2L) } returns listOf(subcategory)
+    fun `findAll should forward subcategoryId filter to output port`() {
+        every { subcategoryOutputPort.findAll(null, 5L) } returns listOf(subcategory)
 
-        val result = useCase.findAll(null, 2L)
-
-        assertEquals(1, result.size)
-        assertEquals(2L, result[0].categoryId)
-    }
-
-    @Test
-    fun `findAll should forward both name and categoryId filters`() {
-        every { subcategoryOutputPort.findAll("Fuel", 2L) } returns listOf(subcategory)
-
-        val result = useCase.findAll("Fuel", 2L)
+        val result = useCase.findAll(null, 5L)
 
         assertEquals(1, result.size)
+        assertEquals(5L, result[0].id)
     }
 
     @Test

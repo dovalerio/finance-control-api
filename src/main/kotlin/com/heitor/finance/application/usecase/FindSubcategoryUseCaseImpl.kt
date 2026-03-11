@@ -14,9 +14,9 @@ class FindSubcategoryUseCaseImpl(
 
     private val logger = LogManager.getLogger(FindSubcategoryUseCaseImpl::class.java)
 
-    override fun findAll(name: String?, categoryId: Long?): List<SubcategoryResponse> {
-        logger.debug("Finding subcategories name={} categoryId={}", name ?: "none", categoryId ?: "none")
-        return subcategoryOutputPort.findAll(name, categoryId).map { it.toResponse() }
+    override fun findAll(name: String?, subcategoryId: Long?): List<SubcategoryResponse> {
+        logger.debug("Finding subcategories name={} subcategoryId={}", name ?: "none", subcategoryId ?: "none")
+        return subcategoryOutputPort.findAll(name, subcategoryId).map { it.toResponse() }
     }
 
     override fun findById(id: Long): SubcategoryResponse {

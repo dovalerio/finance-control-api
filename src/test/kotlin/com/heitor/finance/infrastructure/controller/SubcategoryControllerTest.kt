@@ -94,11 +94,11 @@ class SubcategoryControllerTest {
     }
 
     @Test
-    fun `GET subcategorias should forward id_categoria filter`() {
-        every { findSubcategoryUseCase.findAll(null, 2L) } returns listOf(subcategoryResponse)
+    fun `GET subcategorias should forward id_subcategoria filter`() {
+        every { findSubcategoryUseCase.findAll(null, 5L) } returns listOf(subcategoryResponse)
 
         assertThat(
-            mockMvc.get().uri("/v1/subcategorias").param("id_categoria", "2")
+            mockMvc.get().uri("/v1/subcategorias").param("id_subcategoria", "5")
         ).hasStatusOk()
     }
 
