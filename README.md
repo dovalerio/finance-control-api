@@ -1,4 +1,4 @@
-# API de Controle Financeiro
+\Mv# API de Controle Financeiro
 
 Solução do desafio **"Desafio: API de Controle Financeiro"**.
 
@@ -27,8 +27,8 @@ API REST para controle de gastos e ganhos, permitindo o lançamento de receitas 
 
 | Camada | Tecnologia |
 |---|---|
-| Linguagem | Kotlin 2.x |
-| Framework | Spring Boot 4.0.3 |
+| Linguagem | Kotlin 2.2.21 |
+| Framework | Spring Boot 3.5.3 |
 | Build | Gradle (Kotlin DSL) |
 | Runtime | Java 21 |
 | Banco de Dados | PostgreSQL 16 |
@@ -83,22 +83,28 @@ src/main/kotlin/com/heitor/finance/
 
 ## Executando Localmente
 
-### 1. Subir o banco de dados
+### Opção A — Apenas banco de dados (API via Gradle)
 
 ```bash
-docker compose up -d
+# Sobe somente o PostgreSQL na porta 5433
+docker compose up -d postgres
 ```
 
-Sobe um container PostgreSQL 16 na porta **5433**.
 As migrações Flyway são executadas automaticamente na inicialização da aplicação e criam todas as tabelas.
-
-### 2. Iniciar a API
 
 ```bash
 ./gradlew bootRun
 ```
 
 A API fica disponível em **http://localhost:8080**.
+
+### Opção B — Stack completa com Docker
+
+```bash
+docker compose up --build -d
+```
+
+Sobe o PostgreSQL e compila/executa a API no container. A API fica disponível em **http://localhost:8080**.
 
 ### Variáveis de ambiente
 
@@ -459,7 +465,7 @@ HTTP 200 OK
   },
   "receita": 0.00,
   "despesa": 150.00,
-  "saldo": 0.00
+  "saldo": -150.00
 }
 ```
 
@@ -523,7 +529,7 @@ HTTP 422 Unprocessable Entity
 A documentação interativa está disponível em:
 
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
 O Swagger carrega o contrato OpenAPI exposto em `http://localhost:8080/api.yml`, que reflete exatamente as rotas e schemas definidos em `src/main/resources/static/api.yml`.
@@ -567,6 +573,17 @@ Os testes cobrem todos os fluxos principais:
 - Validações — `400` para campos obrigatórios ausentes
 - Regras de negócio — `valor = 0` (422), subcategoria com lançamentos (409), nomes duplicados (409), período inválido (400)
 
+### Testes de integração (teste.bat)
+
+Script de integração que valida todos os fluxos contra a API em execução:
+
+```bash
+# API deve estar rodando em http://localhost:8080
+teste.bat
+```
+
+Cobre 71 cenários: autenticação, CRUD completo, validações, regras de negócio, exclusão em cascata e proteção de subcategorias com lançamentos.
+
 **Gerar relatório HTML (mochawesome):**
 
 ```bash
@@ -582,15 +599,13 @@ Relatórios gerados em `tests/reports/`:
 
 ## Observabilidade
 
-Endpoints do Spring Actuator disponíveis sem autenticação:
+Endpoint do Spring Actuator disponível sem autenticação:
 
 | Endpoint | Descrição |
 |---|---|
 | `GET /actuator/health` | Status de saúde da aplicação |
-| `GET /actuator/metrics` | Métricas via Micrometer |
-| `GET /actuator/info` | Informações da aplicação |
 
-Métricas no formato Prometheus disponíveis em `/actuator/prometheus`.
+Apenas o endpoint `health` é exposto, seguindo o princípio de mínima exposição recomendado pelo desafio.
 
 ---
 
