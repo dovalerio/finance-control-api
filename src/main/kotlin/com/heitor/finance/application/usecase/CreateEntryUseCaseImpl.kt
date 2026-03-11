@@ -8,6 +8,7 @@ import com.heitor.finance.application.port.output.SubcategoryOutputPort
 import com.heitor.finance.domain.exception.SubcategoryNotFoundException
 import com.heitor.finance.domain.model.Entry
 import com.heitor.finance.domain.model.EntryType
+import com.heitor.finance.domain.model.signedValue
 import com.heitor.finance.domain.valueobject.Money
 import org.apache.logging.log4j.LogManager
 import java.math.BigDecimal
@@ -45,10 +46,9 @@ class CreateEntryUseCaseImpl(
         val saved = entryOutputPort.save(entry)
         logger.info("Entry created id={} type={} subcategoryId={}", saved.id, type, saved.subcategoryId)
 
-        val savedValue = if (saved.type == EntryType.INCOME) saved.amount.amount else saved.amount.amount.negate()
         return EntryResponse(
             id = saved.id!!,
-            value = savedValue,
+            value = saved.signedValue(),
             date = saved.date,
             subcategoryId = saved.subcategoryId,
             comment = saved.comment.ifBlank { null }

@@ -5,7 +5,7 @@ import com.heitor.finance.application.port.input.FindEntryUseCase
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.domain.exception.EntryNotFoundException
 import com.heitor.finance.domain.model.Entry
-import com.heitor.finance.domain.model.EntryType
+import com.heitor.finance.domain.model.signedValue
 import org.apache.logging.log4j.LogManager
 import java.time.LocalDate
 
@@ -26,14 +26,11 @@ class FindEntryUseCaseImpl(
         return entry.toResponse()
     }
 
-    private fun Entry.toResponse(): EntryResponse {
-        val value = if (type == EntryType.INCOME) amount.amount else amount.amount.negate()
-        return EntryResponse(
-            id = id!!,
-            value = value,
-            date = date,
-            subcategoryId = subcategoryId,
-            comment = comment.ifBlank { null }
-        )
-    }
+    private fun Entry.toResponse() = EntryResponse(
+        id = id!!,
+        value = signedValue(),
+        date = date,
+        subcategoryId = subcategoryId,
+        comment = comment.ifBlank { null }
+    )
 }
