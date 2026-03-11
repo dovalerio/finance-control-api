@@ -22,73 +22,28 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class UseCaseConfig {
+class UseCaseConfig(
+    private val categoryPort: CategoryOutputPort,
+    private val subcategoryPort: SubcategoryOutputPort,
+    private val entryPort: EntryOutputPort
+) {
 
-    @Bean
-    fun balanceCalculatorService(): BalanceCalculatorService = BalanceCalculatorService()
+    private val balanceCalculator = BalanceCalculatorService()
 
-    @Bean
-    fun createCategoryUseCase(categoryOutputPort: CategoryOutputPort) =
-        CreateCategoryUseCaseImpl(categoryOutputPort)
+    @Bean fun createCategoryUseCase() = CreateCategoryUseCaseImpl(categoryPort)
+    @Bean fun findCategoryUseCase() = FindCategoryUseCaseImpl(categoryPort)
+    @Bean fun updateCategoryUseCase() = UpdateCategoryUseCaseImpl(categoryPort)
+    @Bean fun deleteCategoryUseCase(): DeleteCategoryUseCase = DeleteCategoryUseCaseImpl(categoryPort)
 
-    @Bean
-    fun findCategoryUseCase(categoryOutputPort: CategoryOutputPort) =
-        FindCategoryUseCaseImpl(categoryOutputPort)
+    @Bean fun findBalanceUseCase() = FindBalanceUseCaseImpl(categoryPort, entryPort, balanceCalculator)
 
-    @Bean
-    fun updateCategoryUseCase(categoryOutputPort: CategoryOutputPort) =
-        UpdateCategoryUseCaseImpl(categoryOutputPort)
+    @Bean fun createSubcategoryUseCase() = CreateSubcategoryUseCaseImpl(subcategoryPort, categoryPort)
+    @Bean fun findSubcategoryUseCase() = FindSubcategoryUseCaseImpl(subcategoryPort)
+    @Bean fun updateSubcategoryUseCase() = UpdateSubcategoryUseCaseImpl(subcategoryPort, categoryPort)
+    @Bean fun deleteSubcategoryUseCase() = DeleteSubcategoryUseCaseImpl(subcategoryPort, entryPort)
 
-    @Bean
-    fun deleteCategoryUseCase(categoryOutputPort: CategoryOutputPort): DeleteCategoryUseCase =
-        DeleteCategoryUseCaseImpl(categoryOutputPort)
-
-    @Bean
-    fun findBalanceUseCase(
-        categoryOutputPort: CategoryOutputPort,
-        entryOutputPort: EntryOutputPort,
-        balanceCalculatorService: BalanceCalculatorService
-    ) = FindBalanceUseCaseImpl(categoryOutputPort, entryOutputPort, balanceCalculatorService)
-
-    @Bean
-    fun createSubcategoryUseCase(
-        subcategoryOutputPort: SubcategoryOutputPort,
-        categoryOutputPort: CategoryOutputPort
-    ) = CreateSubcategoryUseCaseImpl(subcategoryOutputPort, categoryOutputPort)
-
-    @Bean
-    fun findSubcategoryUseCase(subcategoryOutputPort: SubcategoryOutputPort) =
-        FindSubcategoryUseCaseImpl(subcategoryOutputPort)
-
-    @Bean
-    fun updateSubcategoryUseCase(
-        subcategoryOutputPort: SubcategoryOutputPort,
-        categoryOutputPort: CategoryOutputPort
-    ) = UpdateSubcategoryUseCaseImpl(subcategoryOutputPort, categoryOutputPort)
-
-    @Bean
-    fun deleteSubcategoryUseCase(
-        subcategoryOutputPort: SubcategoryOutputPort,
-        entryOutputPort: EntryOutputPort
-    ) = DeleteSubcategoryUseCaseImpl(subcategoryOutputPort, entryOutputPort)
-
-    @Bean
-    fun createEntryUseCase(
-        entryOutputPort: EntryOutputPort,
-        subcategoryOutputPort: SubcategoryOutputPort
-    ) = CreateEntryUseCaseImpl(entryOutputPort, subcategoryOutputPort)
-
-    @Bean
-    fun findEntryUseCase(entryOutputPort: EntryOutputPort) =
-        FindEntryUseCaseImpl(entryOutputPort)
-
-    @Bean
-    fun updateEntryUseCase(
-        entryOutputPort: EntryOutputPort,
-        subcategoryOutputPort: SubcategoryOutputPort
-    ) = UpdateEntryUseCaseImpl(entryOutputPort, subcategoryOutputPort)
-
-    @Bean
-    fun deleteEntryUseCase(entryOutputPort: EntryOutputPort) =
-        DeleteEntryUseCaseImpl(entryOutputPort)
+    @Bean fun createEntryUseCase() = CreateEntryUseCaseImpl(entryPort, subcategoryPort)
+    @Bean fun findEntryUseCase() = FindEntryUseCaseImpl(entryPort)
+    @Bean fun updateEntryUseCase() = UpdateEntryUseCaseImpl(entryPort, subcategoryPort)
+    @Bean fun deleteEntryUseCase() = DeleteEntryUseCaseImpl(entryPort)
 }
