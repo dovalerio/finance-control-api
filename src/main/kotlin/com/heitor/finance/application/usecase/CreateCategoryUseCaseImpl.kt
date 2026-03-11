@@ -2,6 +2,7 @@ package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CreateCategoryRequest
 import com.heitor.finance.application.dto.CategoryResponse
+import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.CreateCategoryUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
@@ -25,6 +26,6 @@ class CreateCategoryUseCaseImpl(
 
         val saved = categoryOutputPort.save(Category(name = name))
         logger.info("Category created id={} name={}", saved.id, saved.name)
-        return CategoryResponse(id = saved.id!!, name = saved.name)
+        return saved.toResponse()
     }
 }

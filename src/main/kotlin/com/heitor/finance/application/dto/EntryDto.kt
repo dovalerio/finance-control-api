@@ -1,6 +1,8 @@
 package com.heitor.finance.application.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.heitor.finance.domain.model.Entry
+import com.heitor.finance.domain.model.signedValue
 import jakarta.validation.constraints.NotNull
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -25,4 +27,12 @@ data class EntryResponse(
     @JsonProperty("data") val date: LocalDate,
     @JsonProperty("id_subcategoria") val subcategoryId: Long?,
     @JsonProperty("comentario") val comment: String?
+)
+
+fun Entry.toResponse() = EntryResponse(
+    id = id!!,
+    value = signedValue(),
+    date = date,
+    subcategoryId = subcategoryId,
+    comment = comment.ifBlank { null }
 )

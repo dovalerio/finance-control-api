@@ -1,6 +1,7 @@
 package com.heitor.finance.application.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.heitor.finance.domain.model.Subcategory
 
 data class CreateSubcategoryRequest(
     @JsonProperty("nome")
@@ -16,3 +17,5 @@ data class SubcategoryResponse(
     @JsonProperty("nome") val name: String,
     @JsonProperty("id_categoria") val categoryId: Long
 )
+
+fun Subcategory.toResponse() = SubcategoryResponse(id = id!!, name = name, categoryId = categoryId)

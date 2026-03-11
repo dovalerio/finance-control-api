@@ -2,6 +2,7 @@ package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CreateEntryRequest
 import com.heitor.finance.application.dto.EntryResponse
+import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.UpdateEntryUseCase
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
@@ -45,12 +46,6 @@ class UpdateEntryUseCaseImpl(
         )
 
         logger.info("Entry updated id={} type={}", updated.id, type)
-        return EntryResponse(
-            id = updated.id!!,
-            value = updated.signedValue(),
-            date = updated.date,
-            subcategoryId = updated.subcategoryId,
-            comment = updated.comment.ifBlank { null }
-        )
+        return updated.toResponse()
     }
 }

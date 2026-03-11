@@ -2,6 +2,7 @@ package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CreateSubcategoryRequest
 import com.heitor.finance.application.dto.SubcategoryResponse
+import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.UpdateSubcategoryUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
@@ -38,6 +39,6 @@ class UpdateSubcategoryUseCaseImpl(
             existing.copy(name = name, categoryId = categoryId)
         )
         logger.info("Subcategory updated id={} name={}", updated.id, updated.name)
-        return SubcategoryResponse(id = updated.id!!, name = updated.name, categoryId = updated.categoryId)
+        return updated.toResponse()
     }
 }

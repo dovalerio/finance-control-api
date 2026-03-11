@@ -2,6 +2,7 @@ package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CategoryResponse
 import com.heitor.finance.application.dto.CreateCategoryRequest
+import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.UpdateCategoryUseCase
 import com.heitor.finance.application.port.output.CategoryOutputPort
 import com.heitor.finance.domain.exception.CategoryAlreadyExistsException
@@ -20,6 +21,6 @@ class UpdateCategoryUseCaseImpl(
         }
 
         val updated = categoryOutputPort.update(existing.copy(name = name))
-        return CategoryResponse(id = updated.id!!, name = updated.name)
+        return updated.toResponse()
     }
 }

@@ -2,6 +2,7 @@ package com.heitor.finance.application.usecase
 
 import com.heitor.finance.application.dto.CreateEntryRequest
 import com.heitor.finance.application.dto.EntryResponse
+import com.heitor.finance.application.dto.toResponse
 import com.heitor.finance.application.port.input.CreateEntryUseCase
 import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.port.output.SubcategoryOutputPort
@@ -45,13 +46,6 @@ class CreateEntryUseCaseImpl(
 
         val saved = entryOutputPort.save(entry)
         logger.info("Entry created id={} type={} subcategoryId={}", saved.id, type, saved.subcategoryId)
-
-        return EntryResponse(
-            id = saved.id!!,
-            value = saved.signedValue(),
-            date = saved.date,
-            subcategoryId = saved.subcategoryId,
-            comment = saved.comment.ifBlank { null }
-        )
+        return saved.toResponse()
     }
 }
