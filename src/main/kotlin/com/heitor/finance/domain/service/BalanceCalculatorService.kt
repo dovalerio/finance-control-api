@@ -8,7 +8,7 @@ import com.heitor.finance.domain.valueobject.Money
 
 class BalanceCalculatorService {
 
-    fun calculate(category: Category, entries: List<Entry>): Balance {
+    fun calculate(entries: List<Entry>): Pair<Money, Money> {
         val income = entries
             .filter { it.type == EntryType.INCOME }
             .fold(Money.ZERO) { acc, entry -> acc + entry.amount }
@@ -16,6 +16,12 @@ class BalanceCalculatorService {
         val expense = entries
             .filter { it.type == EntryType.EXPENSE }
             .fold(Money.ZERO) { acc, entry -> acc + entry.amount }
+
+        return Pair(income, expense)
+    }
+
+    fun calculate(category: Category, entries: List<Entry>): Balance {
+        val (income, expense) = calculate(entries)
 
         return Balance(
             category = category,

@@ -8,9 +8,7 @@ import com.heitor.finance.application.port.output.EntryOutputPort
 import com.heitor.finance.application.util.orThrow
 import com.heitor.finance.domain.exception.CategoryNotFoundException
 import com.heitor.finance.domain.exception.InvalidPeriodException
-import com.heitor.finance.domain.model.EntryType
 import com.heitor.finance.domain.service.BalanceCalculatorService
-import com.heitor.finance.domain.valueobject.Money
 import com.heitor.finance.domain.valueobject.Period
 import java.time.LocalDate
 
@@ -33,10 +31,7 @@ class FindBalanceUseCaseImpl(
 
         if (categoryId == null) {
             val entries = entryOutputPort.findByPeriod(period)
-            val revenue = entries.filter { it.type == EntryType.INCOME }
-                .fold(Money.ZERO) { acc, e -> acc + e.amount }
-            val expense = entries.filter { it.type == EntryType.EXPENSE }
-                .fold(Money.ZERO) { acc, e -> acc + e.amount }
+            val (revenue, expense) = balanceCalculatorService.calculate(entries)
             return BalanceResponse(
                 category = null,
                 revenue = revenue.amount,
