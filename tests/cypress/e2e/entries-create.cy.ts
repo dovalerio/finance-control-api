@@ -19,7 +19,7 @@ describe('POST /lancamentos', () => {
   it('creates an entry with all fields and returns 201', () => {
     const payload = {
       valor: 150.0,
-      data: '2026-03-07',
+      data: '07/03/2026',
       id_subcategoria,
       comentario: 'Lunch',
     }

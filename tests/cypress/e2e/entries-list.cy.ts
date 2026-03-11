@@ -13,7 +13,7 @@ const setupSubcategoryWithEntry = (
         const id_subcategoria = subResponse.body.id_subcategoria
 
         entriesApi
-          .create({ valor: 200.0, data: '2026-03-07', id_subcategoria, comentario: 'Setup entry' })
+          .create({ valor: 200.0, data: '07/03/2026', id_subcategoria, comentario: 'Setup entry' })
           .then((entryResponse) => {
             onReady(id_subcategoria, entryResponse.body.id_lancamento)
           })

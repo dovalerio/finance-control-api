@@ -439,7 +439,7 @@ curl -s -o response.txt -w "%%{http_code}" ^
   -X POST ^
   -H "api-key: %API_KEY%" ^
   -H "Content-Type: application/json" ^
-  -d "{\"valor\":1500.00,\"data\":\"2026-01-10\",\"id_subcategoria\":!SUBCAT_ID!}" ^
+  -d "{\"valor\":1500.00,\"data\":\"10/01/2026\",\"id_subcategoria\":!SUBCAT_ID!}" ^
   %BASE_URL%/lancamentos > status.txt
 set /p STATUS=<status.txt
 call :check 201 "lancamento: criar receita (valor positivo) retorna 201"
@@ -461,7 +461,7 @@ curl -s -o response.txt -w "%%{http_code}" ^
   -X POST ^
   -H "api-key: %API_KEY%" ^
   -H "Content-Type: application/json" ^
-  -d "{\"valor\":-300.00,\"data\":\"2026-01-15\",\"id_subcategoria\":!SUBCAT_ID!}" ^
+  -d "{\"valor\":-300.00,\"data\":\"15/01/2026\",\"id_subcategoria\":!SUBCAT_ID!}" ^
   %BASE_URL%/lancamentos > status.txt
 set /p STATUS=<status.txt
 call :check 201 "lancamento: criar despesa (valor negativo) retorna 201"
@@ -479,7 +479,7 @@ curl -s -o response.txt -w "%%{http_code}" ^
   -X POST ^
   -H "api-key: %API_KEY%" ^
   -H "Content-Type: application/json" ^
-  -d "{\"valor\":-2000.00,\"data\":\"2026-01-20\",\"id_subcategoria\":!SUBCAT_ID!,\"comentario\":\"Despesa extra do mes\"}" ^
+  -d "{\"valor\":-2000.00,\"data\":\"20/01/2026\",\"id_subcategoria\":!SUBCAT_ID!,\"comentario\":\"Despesa extra do mes\"}" ^
   %BASE_URL%/lancamentos > status.txt
 set /p STATUS=<status.txt
 call :check 201 "lancamento: criar com comentario opcional retorna 201"
@@ -520,7 +520,7 @@ curl -s -o response.txt -w "%%{http_code}" ^
   -X POST ^
   -H "api-key: %API_KEY%" ^
   -H "Content-Type: application/json" ^
-  -d "{\"valor\":100.00,\"data\":\"2026-01-01\",\"id_subcategoria\":999999}" ^
+  -d "{\"valor\":100.00,\"data\":\"01/01/2026\",\"id_subcategoria\":999999}" ^
   %BASE_URL%/lancamentos > status.txt
 set /p STATUS=<status.txt
 call :check 404 "lancamento: id_subcategoria inexistente retorna 404"
@@ -546,7 +546,7 @@ exit /b
 :test_list_entries_by_period
 curl -s -o response.txt -w "%%{http_code}" ^
   -H "api-key: %API_KEY%" ^
-  "%BASE_URL%/lancamentos?data_inicio=2026-01-01&data_fim=2026-01-31" > status.txt
+  "%BASE_URL%/lancamentos?data_inicio=01%%2F01%%2F2026&data_fim=31%%2F01%%2F2026" > status.txt
 set /p STATUS=<status.txt
 call :check 200 "lancamento: filtrar por periodo (data_inicio + data_fim) retorna 200"
 exit /b
@@ -570,7 +570,7 @@ curl -s -o response.txt -w "%%{http_code}" ^
   -X PUT ^
   -H "api-key: %API_KEY%" ^
   -H "Content-Type: application/json" ^
-  -d "{\"valor\":1800.00,\"data\":\"2026-01-10\",\"id_subcategoria\":!SUBCAT_ID!}" ^
+  -d "{\"valor\":1800.00,\"data\":\"10/01/2026\",\"id_subcategoria\":!SUBCAT_ID!}" ^
   %BASE_URL%/lancamentos/!ENTRY1_ID! > status.txt
 set /p STATUS=<status.txt
 call :check 200 "lancamento: atualizar retorna 200"
@@ -604,7 +604,7 @@ exit /b
 :test_balance
 curl -s -o response.txt -w "%%{http_code}" ^
   -H "api-key: %API_KEY%" ^
-  "%BASE_URL%/balanco?data_inicio=2026-01-01&data_fim=2026-01-31" > status.txt
+  "%BASE_URL%/balanco?data_inicio=01%%2F01%%2F2026&data_fim=31%%2F01%%2F2026" > status.txt
 set /p STATUS=<status.txt
 call :check 200 "balanco: calcular por periodo retorna 200"
 if "!STATUS!"=="200" (
@@ -618,7 +618,7 @@ exit /b
 if "!CAT_ID!"=="" exit /b
 curl -s -o response.txt -w "%%{http_code}" ^
   -H "api-key: %API_KEY%" ^
-  "%BASE_URL%/balanco?data_inicio=2026-01-01&data_fim=2026-01-31&id_categoria=!CAT_ID!" > status.txt
+  "%BASE_URL%/balanco?data_inicio=01%%2F01%%2F2026&data_fim=31%%2F01%%2F2026&id_categoria=!CAT_ID!" > status.txt
 set /p STATUS=<status.txt
 call :check 200 "balanco: filtrar por id_categoria retorna 200"
 exit /b
@@ -628,11 +628,11 @@ exit /b
 :: Valida que saldo pode ser negativo (contrato da API)
 curl -s -o response.txt -w "%%{http_code}" ^
   -H "api-key: %API_KEY%" ^
-  "%BASE_URL%/balanco?data_inicio=2026-01-01&data_fim=2026-01-31" > status.txt
+  "%BASE_URL%/balanco?data_inicio=01%%2F01%%2F2026&data_fim=31%%2F01%%2F2026" > status.txt
 set /p STATUS=<status.txt
 call :check 200 "balanco: saldo negativo (despesa > receita) retorna 200"
 if "!STATUS!"=="200" (
-    powershell -NoProfile -Command "try { $r = Get-Content response.txt | ConvertFrom-Json; if ($r.saldo -lt 0) { 'OK' } else { 'saldo=' + $r.saldo + ' nao e negativo' } } catch { 'ERRO_PARSE' }" > saldo_tmp.txt 2>nul
+    powershell -NoProfile -Command "try { $r = Get-Content response.txt | ConvertFrom-Json; if ([double]$r.saldo -lt 0) { 'OK' } else { 'saldo=' + $r.saldo + ' nao e negativo' } } catch { 'ERRO_PARSE' }" > saldo_tmp.txt 2>nul
     set /p SALDO_CHK=<saldo_tmp.txt
     del saldo_tmp.txt 2>nul
     if "!SALDO_CHK!"=="OK" (
@@ -646,7 +646,7 @@ exit /b
 :test_balance_invalid_period
 curl -s -o response.txt -w "%%{http_code}" ^
   -H "api-key: %API_KEY%" ^
-  "%BASE_URL%/balanco?data_inicio=2026-02-01&data_fim=2026-01-01" > status.txt
+  "%BASE_URL%/balanco?data_inicio=01%%2F02%%2F2026&data_fim=01%%2F01%%2F2026" > status.txt
 set /p STATUS=<status.txt
 call :check 400 "balanco: data_inicio maior que data_fim retorna 400"
 exit /b
@@ -746,7 +746,7 @@ curl -s -o response.txt -w "%%{http_code}" ^
   -X POST ^
   -H "api-key: %API_KEY%" ^
   -H "Content-Type: application/json" ^
-  -d "{\"valor\":0,\"data\":\"2026-01-01\",\"id_subcategoria\":!SUBCAT_ID!}" ^
+  -d "{\"valor\":0,\"data\":\"01/01/2026\",\"id_subcategoria\":!SUBCAT_ID!}" ^
   %BASE_URL%/lancamentos > status.txt
 set /p STATUS=<status.txt
 call :check 422 "lancamento: criar com valor zero retorna 422"

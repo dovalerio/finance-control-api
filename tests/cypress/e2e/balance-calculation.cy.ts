@@ -15,8 +15,8 @@ describe('GET /balanco', () => {
         .then((subResponse) => {
           const id_subcategoria = subResponse.body.id_subcategoria
 
-          entriesApi.create({ valor: 500.0, data: '2026-03-01', id_subcategoria })
-          entriesApi.create({ valor: -200.0, data: '2026-03-15', id_subcategoria })
+          entriesApi.create({ valor: 500.0, data: '01/03/2026', id_subcategoria })
+          entriesApi.create({ valor: -200.0, data: '15/03/2026', id_subcategoria })
         })
     })
   })

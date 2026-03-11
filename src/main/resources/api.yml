@@ -199,13 +199,15 @@ paths:
           required: false
           schema:
             type: string
-            format: date
+            example: "01/01/2021"
+            description: "Formato dd/MM/yyyy"
         - name: data_fim
           in: query
           required: false
           schema:
             type: string
-            format: date
+            example: "31/01/2021"
+            description: "Formato dd/MM/yyyy"
       responses:
         '200':
           description: Lista de lançamentos
@@ -292,13 +294,15 @@ paths:
           required: true
           schema:
             type: string
-            format: date
+            example: "01/01/2021"
+            description: "Formato dd/MM/yyyy"
         - name: data_fim
           in: query
           required: true
           schema:
             type: string
-            format: date
+            example: "31/01/2021"
+            description: "Formato dd/MM/yyyy"
         - name: id_categoria
           in: query
           required: false
@@ -368,7 +372,8 @@ components:
           type: number
         data:
           type: string
-          format: date
+          example: "01/01/2021"
+          description: "Formato dd/MM/yyyy"
         id_subcategoria:
           type: integer
         comentario:
@@ -384,7 +389,8 @@ components:
           type: number
         data:
           type: string
-          format: date
+          example: "01/01/2021"
+          description: "Formato dd/MM/yyyy"
         id_subcategoria:
           type: integer
         comentario:
