@@ -1,4 +1,9 @@
-\Mv# API de Controle Financeiro
+# API de Controle Financeiro
+
+![CI](https://github.com/dovalerio/finance-control-api/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-green)
 
 Solução do desafio **"Desafio: API de Controle Financeiro"**.
 
