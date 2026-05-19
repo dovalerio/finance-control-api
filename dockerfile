@@ -17,9 +17,6 @@ FROM eclipse-temurin:21-jre-ubi9-minimal
 
 WORKDIR /app
 
-# curl necessário para o HEALTHCHECK
-RUN microdnf install -y curl && microdnf clean all
-
 # create non-root user
 RUN useradd spring
 
