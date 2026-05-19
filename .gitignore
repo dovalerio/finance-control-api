@@ -44,3 +44,6 @@ logs/
 !logs/.gitkeep
 *.log
 *.log.gz
+
+### Secrets ###
+.env

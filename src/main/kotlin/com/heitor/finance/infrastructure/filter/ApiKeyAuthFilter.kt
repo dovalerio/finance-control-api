@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.LogManager
 import org.springframework.web.filter.OncePerRequestFilter
+import java.security.MessageDigest
 
 class ApiKeyAuthFilter(
     private val expectedApiKey: String
@@ -23,7 +24,13 @@ class ApiKeyAuthFilter(
     ) {
         val apiKey = request.getHeader(API_KEY_HEADER)
 
-        if (apiKey == null || apiKey != expectedApiKey) {
+        // MessageDigest.isEqual garante comparação em tempo constante (evita timing attack)
+        val valid = apiKey != null && MessageDigest.isEqual(
+            apiKey.toByteArray(Charsets.UTF_8),
+            expectedApiKey.toByteArray(Charsets.UTF_8)
+        )
+
+        if (!valid) {
             log.warn(
                 "Unauthorized request method={} uri={} remoteAddr={} reason={}",
                 request.method,

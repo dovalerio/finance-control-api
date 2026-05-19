@@ -9,12 +9,16 @@ RUN chmod +x gradlew
 
 COPY src src
 
-RUN ./gradlew clean bootJar --no-daemon
+# -x test: testes são executados na pipeline CI, não no build Docker
+RUN ./gradlew clean bootJar -x test --no-daemon
 
 # ---------- runtime stage ----------
 FROM eclipse-temurin:21-jre-ubi9-minimal
 
 WORKDIR /app
+
+# curl necessário para o HEALTHCHECK
+RUN microdnf install -y curl && microdnf clean all
 
 # create non-root user
 RUN useradd spring
@@ -28,5 +32,8 @@ USER spring
 EXPOSE 8080
 
 ENV SPRING_PROFILES_ACTIVE=prod
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -sf http://localhost:8080/actuator/health || exit 1
 
 ENTRYPOINT ["java","-XX:MaxRAMPercentage=75","-jar","/app/app.jar"]

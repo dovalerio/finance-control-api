@@ -1,0 +1,125 @@
+name: CI/CD — finance-control-api
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ────────────────────────────────────────────────────────
+  # CI — Build e Testes (executa em todos os pushes/PRs)
+  # ────────────────────────────────────────────────────────
+  build-and-test:
+    name: "CI — Build e Testes"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Build, testes e cobertura
+        env:
+          API_KEY: test-api-key
+        run: ./gradlew check jacocoTestReport
+
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/
+
+  # ────────────────────────────────────────────────────────
+  # CD — Deploy (somente push na main, após CI aprovado)
+  # ────────────────────────────────────────────────────────
+  deploy:
+    name: "CD — Deploy DigitalOcean"
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            APP_DIR="/home/deploy/apps/finance-control-api"
+            BACKUP_TS=$(date +%Y%m%d_%H%M%S)
+            BACKUP_DIR="$HOME/backups/finance-control-api"
+
+            # ── 0. Validar variáveis obrigatórias no .env ──────────────
+            echo "▶ [0/5] Validando .env..."
+            REQUIRED="DB_URL DB_USERNAME DB_PASSWORD API_KEY SPRING_FLYWAY_SCHEMAS"
+            MISSING=""
+            for var in $REQUIRED; do
+              grep -q "^${var}=" "$APP_DIR/.env" 2>/dev/null || MISSING="$MISSING $var"
+            done
+            if [ -n "$MISSING" ]; then
+              echo "ERRO: variáveis obrigatórias ausentes no .env:$MISSING"
+              echo "  Atualize $APP_DIR/.env antes do proximo deploy."
+              exit 1
+            fi
+            echo "   .env OK"
+
+            # ── 1. Backup do .env atual ────────────────────────────────
+            echo "▶ [1/5] Backup..."
+            mkdir -p "$BACKUP_DIR"
+            cp "$APP_DIR/.env" "$BACKUP_DIR/.env.$BACKUP_TS"
+            echo "   Backup em: $BACKUP_DIR/.env.$BACKUP_TS"
+
+            # ── 2. Sincronizar código com origin/main ──────────────────
+            echo "▶ [2/5] Sincronizando codigo (git reset --hard origin/main)..."
+            cd "$APP_DIR"
+            git remote set-url origin https://github.com/dovalerio/finance-control-api.git
+            git fetch --prune origin
+            git reset --hard origin/main
+            echo "   Commit: $(git log --oneline -1)"
+
+            # ── 3. Build e deploy com Docker Compose (prod) ──────────
+            echo "▶ [3/5] Docker Compose build + deploy (docker-compose.prod.yml)..."
+            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+
+            # ── 4. Limpeza de imagens antigas ─────────────────────────
+            echo "▶ [4/5] Removendo imagens obsoletas..."
+            docker image prune -f
+
+            # ── 5. Health check com retentativas ──────────────────────
+            echo "▶ [5/5] Health check (aguardando app inicializar)..."
+            sleep 45
+            RETRIES=6
+            for i in $(seq 1 $RETRIES); do
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/actuator/health 2>/dev/null || echo "000")
+              if [ "$STATUS" = "200" ]; then
+                echo "   Health check OK (HTTP $STATUS) na tentativa $i/$RETRIES"
+                break
+              fi
+              echo "   Tentativa $i/$RETRIES -- HTTP $STATUS. Aguardando 15s..."
+              [ "$i" = "$RETRIES" ] && echo "   FALHA: app nao respondeu apos $RETRIES tentativas" && exit 1
+              sleep 15
+            done
+
+            echo ""
+            echo "Deploy concluido com sucesso!"
+            echo "   Commit: $(git log --oneline -1)"

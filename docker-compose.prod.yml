@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: finance-api
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    env_file:
+      - .env
+    mem_limit: 384m
+    cpus: "0.7"
+    networks:
+      - default
+      - postgres_net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default: {}
+  # Rede compartilhada do container postgres (blind-droplet)
+  postgres_net:
+    external: true
+    name: postgres_default

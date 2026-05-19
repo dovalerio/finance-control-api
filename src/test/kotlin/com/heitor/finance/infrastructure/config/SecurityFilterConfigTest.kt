@@ -1,6 +1,7 @@
 package com.heitor.finance.infrastructure.config
 
 import com.heitor.finance.infrastructure.filter.ApiKeyAuthFilter
+import com.heitor.finance.infrastructure.filter.SecurityHeadersFilter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -38,5 +39,30 @@ class SecurityFilterConfigTest {
 
         assertNotNull(registration.urlPatterns)
         assertEquals(true, registration.urlPatterns.contains("/v1/*"))
+    }
+
+    @Test
+    fun `apiKeyFilterRegistration should protect actuator metrics endpoint`() {
+        val registration = config.apiKeyFilterRegistration()
+
+        assertEquals(true, registration.urlPatterns.contains("/actuator/metrics"))
+        assertEquals(true, registration.urlPatterns.contains("/actuator/metrics/*"))
+        assertEquals(true, registration.urlPatterns.contains("/actuator/prometheus"))
+    }
+
+    @Test
+    fun `securityHeadersFilterRegistration should return FilterRegistrationBean with order 0`() {
+        val registration: FilterRegistrationBean<SecurityHeadersFilter> = config.securityHeadersFilterRegistration()
+
+        assertNotNull(registration)
+        assertEquals(0, registration.order)
+        assertNotNull(registration.filter)
+    }
+
+    @Test
+    fun `securityHeadersFilterRegistration should apply to all url patterns`() {
+        val registration = config.securityHeadersFilterRegistration()
+
+        assertEquals(true, registration.urlPatterns.contains("/*"))
     }
 }
