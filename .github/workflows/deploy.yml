@@ -61,7 +61,6 @@ jobs:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          script_stop: true
           script: |
             set -euo pipefail
 
@@ -92,6 +91,8 @@ jobs:
             # ── 2. Sincronizar código com origin/main ──────────────────
             echo "▶ [2/5] Sincronizando codigo (git reset --hard origin/main)..."
             cd "$APP_DIR"
+            # Permite que root opere em repositório owned por deploy
+            git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
             git remote set-url origin https://github.com/dovalerio/finance-control-api.git
             git fetch --prune origin
             git reset --hard origin/main
